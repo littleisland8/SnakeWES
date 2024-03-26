@@ -1,12 +1,12 @@
-Strelka2: resources/strelka-2.9.10.centos6_x86_64/bin/configureStrelkaGermlineWorkflow.py
-Strelka2_intervals: resources/SureSelectV8.wes.mod.strelka2.bed.gz
+Strelka2: SnakeWES/resources/strelka-2.9.10.centos6_x86_64/bin/configureStrelkaGermlineWorkflow.py
+Strelka2_intervals: SnakeWES/resources/SureSelectV8.wes.mod.strelka2.bed.gz
 callers:
   caller1: freebayes
   caller2: bcftools
   caller3: strelka2
-chr_to_exclude: resources/GRCh38_full_analysis_set_plus_decoy_hla.exclude.txt
-clinvar: resources/clinvar_20231217.vcf.gz
-dbNSFP: resources/dbNSFP4.5a_grch38.gz
+chr_to_exclude: SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.exclude.txt
+clinvar: SnakeWES/resources/clinvar_20231217.vcf.gz
+dbNSFP: SnakeWES/resources/dbNSFP4.5a_grch38.gz
 filtering_controls:
   alt_depth: 1
   min_depth: 1
@@ -15,15 +15,14 @@ filtering_tumors:
   alt_depth: 2
   min_depth: 20
   vaf: 0.03
-gatk_pon: resources/1000g_pon.hg38.norm.vcf.gz
-genome: resources/GRCh38_full_analysis_set_plus_decoy_hla.fa
-gnomAD: resources/af-only-gnomad.hg38.norm.vcf.gz
-intervals: resources/SureSelectV8.wes.mod.strelka2.bed.gz
+gatk_pon: SnakeWES/resources/1000g_pon.hg38.norm.vcf.gz
+genome: SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.fa
+gnomAD: SnakeWES/resources/af-only-gnomad.hg38.norm.vcf.gz
+intervals: SnakeWES/resources/SureSelectV8.wes.mod.strelka2.bed.gz
 run_mode: Nocontrol
 samples:
   sample1: HG00145
 strand:
   strandR1: R1
   strandR2: R2
-threads: 20
-vepcache: resources/vep/cache/
+vepcache: SnakeWES/resources/vep/cache/
