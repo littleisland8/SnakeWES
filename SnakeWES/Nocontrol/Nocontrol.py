@@ -28,7 +28,7 @@ def run(parser,args):
 	c.threads= args.threads
 
 	configdict=loadConfig()
-	configdict["run_mode"]="nocontrol"
+	configdict["run_mode"]="Nocontrol"
 
 	with open("SnakeWES/config/conf.yaml","w") as fout:
 

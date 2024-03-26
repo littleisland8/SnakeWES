@@ -28,7 +28,7 @@ def run(parser,args):
 	c.threads= args.threads
 
 	configdict=loadConfig()
-	configdict["run_mode"]="paired"
+	configdict["run_mode"]="Paired"
 
 	with open("SnakeWES/config/conf.yaml","w") as fout:
 
