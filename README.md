@@ -1,2 +1,2 @@
 # SnakeWES
-Snakemake pipeline for Targeted/WES analysis
+Snakemake pipeline for WES analysis

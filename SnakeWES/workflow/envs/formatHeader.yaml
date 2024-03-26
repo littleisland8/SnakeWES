@@ -1,0 +1,8 @@
+channels:
+ - conda-forge
+ - r
+ - bioconda
+dependencies:
+ - r-data.table
+ - r-readr
+ - r-dplyr
