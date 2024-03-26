@@ -11,6 +11,7 @@ class c():
 	'''
 
 	OneSample=False
+	dr=False
 	threads=''
 
 def loadConfig():
@@ -26,6 +27,7 @@ def run(parser,args):
 
 	c.OneSample = args.OneSample
 	c.threads= args.threads
+	c.dr=args.dr
 
 	configdict=loadConfig()
 	configdict["run_mode"]="Nocontrol"
@@ -36,10 +38,22 @@ def run(parser,args):
 
 	if c.OneSample:
 
-		command="snakemake NocontrolsOneSample --cores " + str(c.threads) + " --use-conda"
+		if c.dr:
+
+			command="snakemake NocontrolsOneSample --cores " + str(c.threads) + " --use-conda -np"
+
+		else:
+
+			command="snakemake NocontrolsOneSample --cores " + str(c.threads) + " --use-conda"	
 
 	else:
 
-		command="snakemake Nocontrols --cores " + str(c.threads) + " --use-conda"
+		if c.dr:
+
+			command="snakemake Nocontrols --cores " + str(c.threads) + " --use-conda -np"
+
+		else:
+
+			command="snakemake Nocontrols --cores " + str(c.threads) + " --use-conda"
 
 	subprocess.call(shlex.split(command))

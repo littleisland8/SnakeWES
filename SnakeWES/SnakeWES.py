@@ -21,6 +21,7 @@ def main():
 	
 	additionals=parser_PoN.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform PoN analysis considering 1 tumor sample', action='store_true', default=False)	
+	additionals.add_argument('--dr', help='Execute snakemake in dry-run', action='store_true', default=False)	
 
 	parser_PoN.set_defaults(func=run_subtool)
 
@@ -33,6 +34,7 @@ def main():
 	
 	additionals=parser_paired.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform Paired analysis considering 1 tumor sample', action='store_true', default=False)	
+	additionals.add_argument('--dr', help='Execute snakemake in dry-run', action='store_true', default=False)	
 
 	parser_paired.set_defaults(func=run_subtool)
 
@@ -45,6 +47,7 @@ def main():
 	
 	additionals=parser_nocontrol.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform No control analysis considering 1 tumor sample', action='store_true', default=False)
+	additionals.add_argument('--dr', help='Execute snakemake in dry-run', action='store_true', default=False)	
 
 	parser_nocontrol.set_defaults(func=run_subtool)
 
