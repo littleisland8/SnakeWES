@@ -17,9 +17,7 @@ def main():
 	parser_PoN = subparsers.add_parser('PoN', help='Perform WES analysis considering a panel of normal samples')
 
 	required = parser_PoN.add_argument_group('Required I/O arguments')
-
-	optional = parser_PoN.add_argument_group('Additional parameters')
-	optional.add_argument('--threads', help='number of cores to use for Snakemake pipeline', metavar='', type=int, default=1)
+	required.add_argument('--threads', help='number of cores to use for Snakemake pipeline', required=True, metavar='', type=int, default=1)
 	
 	additionals=parser_PoN.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform PoN analysis considering 1 tumor sample', action='store_true', default=False)	
@@ -31,9 +29,7 @@ def main():
 	parser_paired = subparsers.add_parser('Paired', help='Perform WES analysis considering paired germline-tumor samples')
 
 	required = parser_paired.add_argument_group('Required I/O arguments')
-
-	optional = parser_paired.add_argument_group('Additional parameters')
-	optional.add_argument('--threads', help='number of cores to use for Snakemake pipeline', metavar='', type=int, default=1)
+	required.add_argument('--threads', help='number of cores to use for Snakemake pipeline', required=True, metavar='', type=int, default=1)
 	
 	additionals=parser_paired.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform Paired analysis considering 1 tumor sample', action='store_true', default=False)	
@@ -45,9 +41,7 @@ def main():
 	parser_nocontrol = subparsers.add_parser('Nocontrol', help='Perform WES analysis considering only tumor samples')
 
 	required = parser_nocontrol.add_argument_group('Required I/O arguments')
-
-	optional = parser_nocontrol.add_argument_group('Additional parameters')
-	optional.add_argument('--threads', help='number of cores to use for Snakemake pipeline', metavar='', type=int, default=1)
+	required.add_argument('--threads', help='number of cores to use for Snakemake pipeline', required=True, metavar='', type=int, default=1)
 	
 	additionals=parser_nocontrol.add_argument_group('Additional arguments')
 	additionals.add_argument('--OneSample', help='Perform No control analysis considering 1 tumor sample', action='store_true', default=False)
