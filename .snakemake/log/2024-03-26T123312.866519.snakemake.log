@@ -1,0 +1,7 @@
+Building DAG of jobs...
+MissingInputException in rule fastqcUntrimmedTumor in file /home/simone/mnt/part4/SnakeWES/SnakeWES/workflow/rules/fastqc.smk, line 1:
+Missing input files for rule fastqcUntrimmedTumor:
+    output: qc/HG00145_tumor_R1_fastqc.html, qc/HG00145_tumor_R1_fastqc.zip
+    wildcards: sample=HG00145, strand=R1
+    affected files:
+        data/fastq/HG00145.tumor.R1.fastq.gz

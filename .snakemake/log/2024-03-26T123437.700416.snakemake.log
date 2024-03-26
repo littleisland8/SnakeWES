@@ -1,0 +1,8 @@
+Building DAG of jobs...
+MissingInputException in rule FreebayesCallNormTumorNocontrol in file /home/simone/mnt/part4/SnakeWES/SnakeWES/workflow/rules/nocontrol.smk, line 376:
+Missing input files for rule FreebayesCallNormTumorNocontrol:
+    output: SnakeWES/results/HG00145_tumor/HG00145.freebayes.vcf.gz
+    wildcards: sample=HG00145
+    affected files:
+        SnakeWES/alignments/HG00145.tumor.dd.rec.bam
+        SnakeWES/alignments/HG00145.tumor.dd.rec.bai

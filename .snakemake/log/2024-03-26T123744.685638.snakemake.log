@@ -1,0 +1,8 @@
+Building DAG of jobs...
+MissingInputException in rule fastpTumor in file /home/simone/mnt/part4/SnakeWES/SnakeWES/workflow/rules/trim.smk, line 1:
+Missing input files for rule fastpTumor:
+    output: SnakeWES/data/fastq/HG00145.tumor.R1.tr.fastq.gz, SnakeWES/data/fastq/HG00145.tumor.R2.tr.fastq.gz, SnakeWES/data/HG00145.tumor.json, SnakeWES/data/HG00145.tumor.failedreads.txt, SnakeWES/data/HG00145.tumor.html, SnakeWES/data/HG00145.tumor.u1.fq.gz, SnakeWES/data/HG00145.tumor.u2.fq.gz
+    wildcards: sample=HG00145
+    affected files:
+        SnakeWES/data/fastq/HG00145.tumor.R2.fastq.gz
+        SnakeWES/data/fastq/HG00145.tumor.R1.fastq.gz

@@ -48,7 +48,7 @@ rule GetPileupSummariesTumorNocontrol:
 	params:
 		extra="",
 	log:
-		"logs/{sample}.GetPileupSummariesTumorNocontrol.log",
+		"SnakeWES/logs/{sample}.GetPileupSummariesTumorNocontrol.log",
 	wrapper:
 		"v3.3.3/bio/gatk/getpileupsummaries"
 
@@ -60,7 +60,7 @@ rule CalculateContaminationTumorNocontrol:
 		segmentation="SnakeWES/data/{sample}.tumor.tumorSeg.txt"
 	threads: 1
 	log:
-		"logs/{sample}.CalculateContaminationTumorNocontrol.log",
+		"SnakeWES/logs/{sample}.CalculateContaminationTumorNocontrol.log",
 	conda:
 		"../envs/gatk4.yaml"
 	params:
@@ -83,7 +83,7 @@ rule FilterMutectCallsTumorNocontrol:
 	output:
 		vcf="SnakeWES/results/{sample}_tumor/{sample}.mutect2.FiltMut.vcf.gz",
 	log:
-		"logs/{sample}.FilterMutectCallsTumorNocontrol.log",
+		"SnakeWES/logs/{sample}.FilterMutectCallsTumorNocontrol.log",
 	params:
 		#extra="--tumor-segmentation SnakeWES/data/{wildcard.sample}.tumseg.txt",  # optional arguments, see GATK docs
 		java_opts="-XX:ParallelGCThreads=" + str(config["threads"])  # optional
@@ -100,7 +100,7 @@ rule CleanFilterMutectTumorOutputNocontrol:
 		tbi="SnakeWES/results/{sample}_tumor/{sample}.mutect2.filt.vcf.gz.tbi"
 	threads: 1
 	log:
-		"logs/{sample}.CleanFilterMutectTumorOutputNocontrol.log"
+		"SnakeWES/logs/{sample}.CleanFilterMutectTumorOutputNocontrol.log"
 	params:	
 		excl=config["chr_to_exclude"],
 		depth=config['filtering_tumors']['min_depth'],
@@ -127,7 +127,7 @@ rule MergeMutect2TumorOutputNocontrol:
 		tbi="SnakeWES/results/multisample.mutect2.vcf.gz.tbi"
 	threads: 1
 	log:
-		"logs/multisample.MergeMutect2TumorOutputNocontrol.log"
+		"SnakeWES/logs/multisample.MergeMutect2TumorOutputNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -150,7 +150,7 @@ rule BcftoolsCallOnTumorsNocontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.BcftoolsCallOnTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.BcftoolsCallOnTumorsNocontrol.log"
 	shell:
 		"bcftools mpileup -Ou -d 10000 -R {params.intervals} -a FORMAT/DP,FORMAT/AD,FORMAT/ADF,FORMAT/ADR -f {params.ref} {input.bam} | "
 		"bcftools call -mv | "
@@ -165,7 +165,7 @@ rule BcftoolsIndexTumorsNocontrol:
 	conda:
 		"../envs/tabix.yaml"
 	log:
-		"logs/{sample}.BcftoolsIndexTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.BcftoolsIndexTumorsNocontrol.log"
 	shell:
 		"tabix -p vcf {input}"
 
@@ -181,7 +181,7 @@ rule BcftoolsAddAfFieldOnTumorsNocontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.BcftoolsAddAfFieldOnTumorsNoncontrol.log"
+		"SnakeWES/logs/{sample}.BcftoolsAddAfFieldOnTumorsNoncontrol.log"
 	params:
 		tsv="SnakeWES/results/{sample}_tumor/{sample}.annot.tsv.gz",
 		tsv_tbi="SnakeWES/results/{sample}_tumor/{sample}.annot.tsv.gz.tbi"
@@ -211,7 +211,7 @@ rule BcftoolsFilterTumorsNocontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.BcftoolsFilterTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.BcftoolsFilterTumorsNocontrol.log"
 	shell:
 		"bcftools view -i 'FORMAT/DP >= {params.depth} & FORMAT/AF >= {params.vaf} & FORMAT/AD[0:1] >= {params.alt}' {input} | "
 		"grep -v -f {params.excl} | "
@@ -227,7 +227,7 @@ rule MergeBcftoolsTumorOutputNocontrol:
 		tbi="SnakeWES/results/multisample.bcftools.vcf.gz.tbi"
 	threads: 1
 	log:
-		"logs/multisample.MergeBcftoolsTumorOutputNocontrol.log"
+		"SnakeWES/logs/multisample.MergeBcftoolsTumorOutputNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -251,7 +251,7 @@ rule VarscanCallSnvTumorsNocontrol:
 	conda:
 		"../envs/varscan.yaml"
 	log:
-		"logs/{sample}.VarscanCallSnvTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.VarscanCallSnvTumorsNocontrol.log"
 	shell:
 		"samtools mpileup -l {params.intervals} -f {params.ref} {input.bam} |"
 		"varscan mpileup2snp --strand-filter 1 --output-vcf --min-avg-qual 1 --p-value 1 --min-var-freq 0 --min-coverage 1 --min-reads2 1 |"
@@ -272,7 +272,7 @@ rule VarscanCallIndelTumorsNocontrol:
 	conda:
 		"../envs/varscan.yaml"
 	log:
-		"logs/{sample}.VarscanCallIndelTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.VarscanCallIndelTumorsNocontrol.log"
 	shell:
 		"samtools mpileup -l {params.intervals} -f {params.ref} {input.bam} | "
 		"varscan mpileup2indel --strand-filter 1 --output-vcf --min-avg-qual 1 --p-value 1 --min-var-freq 0 --min-coverage 1 --min-reads2 1 | "
@@ -293,7 +293,7 @@ rule VarscanConcatTumorNocontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.VarscanConcatTumorNocontrol.log"
+		"SnakeWES/logs/{sample}.VarscanConcatTumorNocontrol.log"
 	shell: 
 		"bcftools concat -a -Ov {input.vcf_snv} {input.vcf_indel} | "
 		"bcftools norm -Oz -m - -f {params} -Oz -o {output} 2>{log}"
@@ -306,7 +306,7 @@ rule VarscanModAFTumorNoncontrol:
 		tsv="SnakeWES/results/{sample}_tumor/{sample}.varscan.annot.tsv.gz",
 		tsv_tbi="SnakeWES/results/{sample}_tumor/{sample}.varscan.annot.tsv.gz.tbi"
 	log:
-		"logs/{sample}.VarscanModAFTumorNoncontrol.log"
+		"SnakeWES/logs/{sample}.VarscanModAFTumorNoncontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -327,7 +327,7 @@ rule VarscanReheaderTumorNontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.VarscanReheaderTumorNontrol.log"
+		"SnakeWES/logs/{sample}.VarscanReheaderTumorNontrol.log"
 	shell: 
 		"echo {wildcards.sample} > {params.txt} 2>{log} && "
 		"bcftools reheader -s {params.txt} -o {output} {input} 2>>{log} && "
@@ -348,7 +348,7 @@ rule FilterVarscanTumorsNocontrol:
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"logs/{sample}.FilterVarscanTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.FilterVarscanTumorsNocontrol.log"
 	shell:
 		"bcftools view -Ov -i'FORMAT/DP >= {params.min_depth} & FORMAT/AD >= {params.alt} & FORMAT/AF >= {params.vaf}' {input} | "
 		"grep -v -f {params.excl} | "
@@ -366,7 +366,7 @@ rule MergeVarscanTumorsNocontrol: ## difference between single curly and doucle 
 	conda:
 		"../envs/bcftools.yaml"
 	log: 
-		"logs/multisample.varscan.log"
+		"SnakeWES/logs/multisample.varscan.log"
 	shell:
 		"bcftools merge -m none -Oz -o {output.vcf} {input.vcf} 2>{log} &&"
 		"tabix -p vcf {output.vcf} 2>>{log}"
@@ -386,7 +386,7 @@ rule FreebayesCallNormTumorNocontrol:
 		ref=config["genome"],
 		intervals=config["intervals"]
 	log:
-		"logs/{sample}.freebayes_call_and_norm_on_samples.log"
+		"SnakeWES/logs/{sample}.freebayes_call_and_norm_on_samples.log"
 	shell:
 		"freebayes -f {params.ref} -F 0.01 -C 2 -t {params.intervals} --pooled-continuous {input.bam} | "
 		"bcftools norm -m - -f {params.ref} -Oz -o {output} 2>{log}"
@@ -400,7 +400,7 @@ rule FreebayesIndexTumorsNocontrol:
 	conda:
 		"../envs/tabix.yaml"
 	log:
-		"logs/{sample}.FreebayesIndexTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.FreebayesIndexTumorsNocontrol.log"
 	shell:
 		"tabix -p vcf {input}"
 
@@ -412,7 +412,7 @@ rule FreebayesAddAFTumorNocontrol:
 		#tsv="SnakeWES/results/{sample}_tumor/{sample}.freebayes.annot.tsv.gz",
 		#tsv_tbi="SnakeWES/results/{sample}_tumor/{sample}.freebayes.annot.tsv.gz.tbi"
 	log:
-		"logs/{sample}.FreebayesAddAFTumorNocontrol.log",
+		"SnakeWES/logs/{sample}.FreebayesAddAFTumorNocontrol.log",
 	threads: 1
 	conda:
 		"../envs/bcftools.yaml"
@@ -436,7 +436,7 @@ rule FreebayesFilterTumorNocontrol:
 		vcf="SnakeWES/results/{sample}_tumor/{sample}.freebayes.filt.vcf.gz",
 		tbi="SnakeWES/results/{sample}_tumor/{sample}.freebayes.filt.vcf.gz.tbi"
 	log:
-		"logs/{sample}.FreebayesFilterTumorNocontrol.log",
+		"SnakeWES/logs/{sample}.FreebayesFilterTumorNocontrol.log",
 	threads: 1
 	conda:
 		"../envs/bcftools.yaml"
@@ -460,7 +460,7 @@ rule MergeFreebayesTumorOutputNocontrol:
 		tbi="SnakeWES/results/multisample.freebayes.vcf.gz.tbi"
 	threads: 1
 	log:
-		"logs/multisample.MergeFreebayesTumorOutputNocontrol.log"
+		"SnakeWES/logs/multisample.MergeFreebayesTumorOutputNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -477,7 +477,7 @@ rule Strelka2Configuration:
 		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
 	threads: 1
 	log:
-		"logs/{sample}.Strelka2Configuration.log"
+		"SnakeWES/logs/{sample}.Strelka2Configuration.log"
 	params:
 		target=config["Strelka2_intervals"],
 		ref=config["genome"],
@@ -493,7 +493,7 @@ rule RunStrelka2:
 		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
 	threads: 20
 	log:
-		"logs/{sample}.RunStrelka2.log"
+		"SnakeWES/logs/{sample}.RunStrelka2.log"
 	params:
 		tmp="SnakeWES/results/{sample}_tumor/strelka2/results/variants/variants.vcf.gz",
 		ref=config["genome"]
@@ -509,7 +509,7 @@ rule Strelka2IndexTumorsNocontrol:
 	conda:
 		"../envs/tabix.yaml"
 	log:
-		"logs/{sample}.FreebayesIndexTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.FreebayesIndexTumorsNocontrol.log"
 	shell:
 		"tabix -p vcf {input}"
 
@@ -524,7 +524,7 @@ rule MakeConsensus:
 		tbi="SnakeWES/results/{sample}_tumor/{sample}.consensus.vcf.gz.tbi"
 	threads:1
 	log:
-		"logs/{sample}.MakeConsensus.log"
+		"SnakeWES/logs/{sample}.MakeConsensus.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -544,7 +544,7 @@ rule VepSingleSampleNocontrol:
 	threads: 
 		config["threads"]
 	log:
-		"logs/{sample}.Vep{caller}SingleSampleNocontrol.log"
+		"SnakeWES/logs/{sample}.Vep{caller}SingleSampleNocontrol.log"
 	conda:
 		"../envs/vep.yaml"
 	params:
@@ -565,7 +565,7 @@ rule VepMultisampleNocontrol:
 	threads:
 		config["threads"]
 	log:
-		"logs/Vep{caller}MultisamplePoN.log"
+		"SnakeWES/logs/Vep{caller}MultisamplePoN.log"
 	conda:
 		"../envs/vep.yaml"
 	params:
@@ -588,7 +588,7 @@ rule SplitVepMutect2SingleSampleNocontrol:
 		"SnakeWES/results/{sample}_tumor/{sample}.mutect2.filt.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/{sample}.SplitVepMutect2SingleSampleNocontrol.log"
+		"SnakeWES/logs/{sample}.SplitVepMutect2SingleSampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -605,7 +605,7 @@ rule SplitVepMutect2MultisampleNocontrol:
 		"SnakeWES/results/multisample.mutect2.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/SplitVepMutect2MultisampleNocontrol.log"
+		"SnakeWES/logs/SplitVepMutect2MultisampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -624,7 +624,7 @@ rule SplitVepFreebayesSingleSampleNocontrol:
 		"SnakeWES/results/{sample}_tumor/{sample}.freebayes.filt.vep.tmp01.tsv"
 	threads:1
 	log:
-		"logs/{sample}.SplitVepFreebayesSingleSampleNocontrol.log"
+		"SnakeWES/logs/{sample}.SplitVepFreebayesSingleSampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -641,7 +641,7 @@ rule SplitVepFreebayesMultisampleNocontrol:
 		"SnakeWES/results/multisample.freebayes.vep.tmp01.tsv"
 	threads: 1 
 	log:
-		"logs/SplitVepFreebayesMultisampleNocontrol.log"
+		"SnakeWES/logs/SplitVepFreebayesMultisampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -660,7 +660,7 @@ rule SplitVepBcftoolsSingleSampleNocontrol:
 		"SnakeWES/results/{sample}_tumor/{sample}.bcftools.filt.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/{sample}.SplitVepBcftoolsSingleSampleNocontrol.log"
+		"SnakeWES/logs/{sample}.SplitVepBcftoolsSingleSampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -677,7 +677,7 @@ rule SplitVepBcftoolsMultisampleNocontrol:
 		"SnakeWES/results/multisample.bcftools.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/SplitVepBcftoolsMultisampleNocontrol.log"
+		"SnakeWES/logs/SplitVepBcftoolsMultisampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -696,7 +696,7 @@ rule SplitVepVarscanSingleSampleNocontrol:
 		"SnakeWES/results/{sample}_tumor/{sample}.varscan.filt.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/{sample}.SplitVepVarscanSingleSampleNocontrol.log"
+		"SnakeWES/logs/{sample}.SplitVepVarscanSingleSampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -713,7 +713,7 @@ rule SplitVepVarscanMultisampleNocontrol:
 		"SnakeWES/results/multisample.varscan.vep.tmp01.tsv"
 	threads: 1
 	log:
-		"logs/SplitVepVarscanMultisampleNocontrol.log"
+		"SnakeWES/logs/SplitVepVarscanMultisampleNocontrol.log"
 	conda:
 		"../envs/bcftools.yaml"
 	shell:
@@ -734,7 +734,7 @@ rule AddSampleNamesMultisampleNocontrol:
 		txt="SnakeWES/results/{caller}_sample_list.txt", 
 		script="workflow/scripts/add_sample_names_wes.py"
 	log:
-		"logs/{caller}.AddSampleNamesMultisamplePoN.log"
+		"SnakeWES/logs/{caller}.AddSampleNamesMultisamplePoN.log"
 	shell:
 		"bcftools query -l {input.vcf} | sed 's/_tumor//g' > {params.txt} 2>{log} && "
 		"python {params.script} {input.tsv} {output} {params.txt} 2>>{log} && "
@@ -751,7 +751,7 @@ rule FillEmptyFieldwithNAoneSampleNocontrol:
 		"SnakeWES/results/{sample}_tumor/{sample}.{caller}.filt.vep.tmp02.tsv"
 	threads: 1 
 	log:
-		"logs/{sample}.{caller}.FillEmptyFieldwithNAoneSamplePoN.log"
+		"SnakeWES/logs/{sample}.{caller}.FillEmptyFieldwithNAoneSamplePoN.log"
 	shell:
 		"""
 		awk 'BEGIN{{FS=OFS="\t"}} {{for(i=1;i<=NF;i++) if($i==".") $i="NA"}}1' {input} > {output}
@@ -764,7 +764,7 @@ rule FillEmptyFieldwithNAmultisampleNocontrol:
 		"SnakeWES/results/multisample.{caller}.vep.tmp03.tsv"
 	threads: 1 
 	log:
-		"logs/{caller}.FillEmptyFieldwithNAoneSamplePoN.log"
+		"SnakeWES/logs/{caller}.FillEmptyFieldwithNAoneSamplePoN.log"
 	shell:
 		"""
 		awk 'BEGIN{{FS=OFS="\t"}} {{for(i=1;i<=NF;i++) if($i==".") $i="NA"}}1' {input} > {output}
@@ -781,7 +781,7 @@ rule FormattingHeaderSingleSample:
 		"workflow/scripts/formatting_header.R"
 	threads: 1 
 	log:
-		"logs/{sample}.{caller}.FormattingHeaderSingleSample.log"
+		"SnakeWES/logs/{sample}.{caller}.FormattingHeaderSingleSample.log"
 	conda:
 		"../envs/formatHeader.yaml"
 	shell:
@@ -797,7 +797,7 @@ rule FormattingHeaderMultisample:
 		"workflow/scripts/formatting_header.R"
 	threads: 1 
 	log:
-		"logs/{caller}.FormattingHeaderMultisample.log"
+		"SnakeWES/logs/{caller}.FormattingHeaderMultisample.log"
 	conda:
 		"../envs/formatHeader.yaml"
 	shell:
