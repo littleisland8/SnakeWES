@@ -64,7 +64,6 @@ rule CalculateContaminationTumorNocontrol:
 	conda:
 		"../envs/gatk4.yaml"
 	params:
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"]),
 		mem_mb="-Xmx4G"
 		#extra="--tumor-segmentation SnakeWES/data/{wildcards.sample}.tumseg.txt"
 	shell:
@@ -541,8 +540,7 @@ rule VepSingleSampleNocontrol:
 		vcf="SnakeWES/results/{sample}_tumor/{sample}.{caller}.filt.vep.vcf.gz",  
 		tbi="SnakeWES/results/{sample}_tumor/{sample}.{caller}.filt.vep.vcf.gz.tbi",
 		html="SnakeWES/results/{sample}_tumor/{sample}.{caller}.filt.vep.html"
-	threads: 
-		config["threads"]
+	threads: 1
 	log:
 		"SnakeWES/logs/{sample}.Vep{caller}SingleSampleNocontrol.log"
 	conda:
@@ -562,8 +560,7 @@ rule VepMultisampleNocontrol:
 		vcf="SnakeWES/results/multisample.{caller}.vep.vcf.gz",
 		tbi="SnakeWES/results/multisample.{caller}.vep.vcf.gz.tbi",
 		html="SnakeWES/results/multisample.{caller}.vep.html"
-	threads:
-		config["threads"]
+	threads:1
 	log:
 		"SnakeWES/logs/Vep{caller}MultisamplePoN.log"
 	conda:
