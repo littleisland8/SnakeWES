@@ -127,11 +127,11 @@ def run_subtool(parser, args):
 	
 	elif args.command == 'Paired': 
 
-		from .paired import paired as submodule
+		from .Paired import Paired as submodule
 
 	elif args.command == 'Nocontrol':
 
-		from .nocontrol import nocontrol as submodule
+		from .Nocontrol import Nocontrol as submodule
 
 	else:
 

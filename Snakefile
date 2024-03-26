@@ -1,16 +1,16 @@
-configfile: "config/conf.yaml"
+configfile: "SnakeWES/config/conf.yaml"
 
-include: "rules/fastqc.smk"
-include: "rules/trim.smk"
-include: "rules/depth.smk"
-include: "rules/align.smk"
-include: "rules/alfred.smk"
-include: "rules/vep.smk"
+include: "SnakeWES/workflow/rules/fastqc.smk"
+include: "SnakeWES/workflow/rules/trim.smk"
+include: "SnakeWES/workflow/rules/depth.smk"
+include: "SnakeWES/workflow/rules/align.smk"
+include: "SnakeWES/workflow/rules/alfred.smk"
+include: "SnakeWES/workflow/rules/vep.smk"
 
 if config["run_mode"] == "PoN":
 
-	include: "rules/PoN.smk"
-	include: "rules/pureCN.smk"
+	include: "SnakeWES/workflow/rules/PoN.smk"
+	include: "SnakeWES/workflow/rules/pureCN.smk"
 
 	rule PoN:
 		input:
@@ -43,7 +43,7 @@ if config["run_mode"] == "PoN":
 
 elif config["run_mode"] == "Nocontrol":
 
-	include: "rules/nocontrol.smk"
+	include: "SnakeWES/workflow/rules/nocontrol.smk"
 	
 	rule Nocontrols:
 		input:
@@ -68,7 +68,7 @@ elif config["run_mode"] == "Nocontrol":
 
 elif config["run_mode"] == "Paired":
 
-	include: "rules/paired.smk"
+	include: "SnakeWES/workflow/rules/paired.smk"
 
 	rule Paired:
 		input:
