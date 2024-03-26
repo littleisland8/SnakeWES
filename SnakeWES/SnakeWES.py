@@ -54,9 +54,6 @@ def main():
 
 	parser_nocontrol.set_defaults(func=run_subtool)
 
-	args = parser.parse_args()
-	args.func(parser, args)
-
 	if len(sys.argv)==1:
     	
 		parser.print_help(sys.stderr)
@@ -76,6 +73,8 @@ def main():
 
 		sys.argv[1] = 'Nocontrol'
 
+	args = parser.parse_args()
+	args.func(parser, args)
 
 
 class CustomFormat(HelpFormatter):
@@ -117,7 +116,6 @@ class CustomFormat(HelpFormatter):
 	def _get_default_metavar_for_optional(self, action):
 
 		return action.dest.upper()
-
 
 
 def run_subtool(parser, args):
