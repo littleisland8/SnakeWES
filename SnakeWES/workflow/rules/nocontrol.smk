@@ -81,12 +81,12 @@ rule FilterMutectCallsTumorNocontrol:
 		segmentation="SnakeWES/data/{sample}.tumor.tumorSeg.txt", # from gatk CalculateContamination
 		f1r2="SnakeWES/data/{sample}.tumor.artifacts_prior.tar.gz" # from gatk LearnReadOrientationBias
 	output:
-		vcf="SnakeWES/results/{sample}_tumor/{sample}.mutect2.FiltMut.vcf.gz",
+		vcf="SnakeWES/results/{sample}_tumor/{sample}.mutect2.FiltMut.vcf.gz"
+	threads: 10
 	log:
 		"SnakeWES/logs/{sample}.FilterMutectCallsTumorNocontrol.log",
 	params:
 		#extra="--tumor-segmentation SnakeWES/data/{wildcard.sample}.tumseg.txt",  # optional arguments, see GATK docs
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"])  # optional
 	resources:
 		mem_mb=4096,
 	wrapper:

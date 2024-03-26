@@ -1,14 +1,14 @@
 rule fastqcUntrimmedTumor:
 	input:
-		"data/fastq/{sample}.tumor.{strand}.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.tumor.{strand}.fastq.gz"
 	output:
-		html="qc/{sample}_tumor_{strand}_fastqc.html",
-		zip="qc/{sample}_tumor_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_tumor_{strand}_fastqc.html",
+		zip="SnakeWES/qc/{sample}_tumor_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
 		extra = "--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcUntrimmedTumor.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcUntrimmedTumor.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:
@@ -16,15 +16,15 @@ rule fastqcUntrimmedTumor:
 
 rule fastqcUntrimmedControl:
 	input:
-		"data/fastq/{sample}.control.{strand}.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.control.{strand}.fastq.gz"
 	output:
-		html="qc/{sample}_control_{strand}_fastqc.html",
-		zip="qc/{sample}_control_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_control_{strand}_fastqc.html",
+		zip="SnakeWES/qc/{sample}_control_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
 		extra = "--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcUntrimmedControl.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcUntrimmedControl.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:
@@ -32,15 +32,15 @@ rule fastqcUntrimmedControl:
 
 rule fastqcUntrimmedGermline:
 	input:
-		"data/fastq/{sample}.germline.{strand}.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.germline.{strand}.fastq.gz"
 	output:
-		html="qc/{sample}_germline_{strand}_fastqc.html",
-		zip="qc/{sample}_germline_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_germline_{strand}_fastqc.html",
+		zip="SnakeWES/qc/{sample}_germline_{strand}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
 		extra = "--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcUntrimmedGermline.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcUntrimmedGermline.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:
@@ -48,15 +48,15 @@ rule fastqcUntrimmedGermline:
 
 rule fastqcTrimmedTumor:
 	input:
-		"data/fastq/{sample}.tumor.{strand}.tr.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.tumor.{strand}.tr.fastq.gz"
 	output:
-		html="qc/{sample}_tumor_{strand}_tr_fastqc.html",
-		zip="qc/{sample}_tumor_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_tumor_{strand}_tr_fastqc.html",
+		zip="SnakeWES/qc/{sample}_tumor_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
-		extra = "--quiet"
+		extra="--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcUntrimmedTumor.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcUntrimmedTumor.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:
@@ -64,15 +64,15 @@ rule fastqcTrimmedTumor:
 
 rule fastqcTrimmedControl:
 	input:
-		"data/fastq/{sample}.control.{strand}.tr.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.control.{strand}.tr.fastq.gz"
 	output:
-		html="qc/{sample}_control_{strand}_tr_fastqc.html",
-		zip="qc/{sample}_control_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_control_{strand}_tr_fastqc.html",
+		zip="SnakeWES/qc/{sample}_control_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
-		extra = "--quiet"
+		extra="--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcTrimmedControl.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcTrimmedControl.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:
@@ -80,15 +80,15 @@ rule fastqcTrimmedControl:
 
 rule fastqcTrimmedGermline:
 	input:
-		"data/fastq/{sample}.germline.{strand}.tr.fastq.gz"
+		"SnakeWES/data/fastq/{sample}.germline.{strand}.tr.fastq.gz"
 	output:
-		html="qc/{sample}_germline_{strand}_tr_fastqc.html",
-		zip="qc/{sample}_germline_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+		html="SnakeWES/qc/{sample}_germline_{strand}_tr_fastqc.html",
+		zip="SnakeWES/qc/{sample}_germline_{strand}_tr_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
 	params:
-		extra = "--quiet"
+		extra="--quiet"
 	log:
-		"logs/{sample}_{strand}.fastqcTrimmedGermline.log"
-	threads: config["threads"]
+		"SnakeWES/logs/{sample}_{strand}.fastqcTrimmedGermline.log"
+	threads: 1
 	resources:
 		mem_mb = 1024
 	wrapper:

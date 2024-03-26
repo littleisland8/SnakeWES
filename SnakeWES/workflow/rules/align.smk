@@ -14,7 +14,7 @@ rule bwaTumor:
 		extra=r"-R '@RG\tID:{sample}_wesMasto\tSM:{sample}_tumor\tDT:20230515\tPI:150\tLB:SureSelectV8\tPL:ILLUMINA\tCN:BIODIVERSA'",
 		sort="samtools",  
 		sort_order="coordinate"
-	threads: config["threads"]
+	threads: 1
 	wrapper:
 		"v3.3.3/bio/bwa-mem2/mem"
 
@@ -24,7 +24,7 @@ rule bwaControl:
 		idx=multiext(config['genome'], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
 	output: 
 		temp("SnakeWES/alignments/{sample}.control.srt.bam")
-	threads: config["threads"]
+	threads: 1
 	message:
 		"Mapping reads with bwa-mem2 on control {wildcards.sample}"
 	benchmark:
@@ -44,7 +44,7 @@ rule bwaGermline:
 		idx=multiext(config['genome'], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
 	output: 
 		temp("SnakeWES/alignments/{sample}.germline.srt.bam")
-	threads: config["threads"]
+	threads: 1
 	message:
 		"Mapping reads with bwa-mem2 on germline {wildcards.sample}"
 	benchmark:
@@ -65,6 +65,7 @@ rule markDuplicatesTumor:
 		bam=temp("SnakeWES/alignments/{sample}.tumor.dd.bam"),
 		bai=temp("SnakeWES/alignments/{sample}.tumor.dd.bai"),
 		metrics="SnakeWES/data/{sample}.tumor.metrics.txt"
+	threads: 1
 	log:
 		"SnakeWES/logs/{sample}.markDuplicatesTumor.log"
 	message:
@@ -72,8 +73,7 @@ rule markDuplicatesTumor:
 	benchmark:
 		"benchmarks/{sample}.markDuplicatesTumor.txt"
 	params:
-		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT",
-		java_opts="-XX:ParallelGCThreads="+str(config["threads"])
+		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
 		mem_mb=4096    
 	log:
@@ -88,6 +88,7 @@ rule markDuplicatesControl:
 		bam=temp("SnakeWES/alignments/{sample}.control.dd.bam"),
 		bai=temp("SnakeWES/alignments/{sample}.control.dd.bai"),
 		metrics="SnakeWES/data/{sample}.control.metrics.txt"
+	threads: 1
 	log:
 		"SnakeWES/logs/{sample}.markDuplicatesControl.log"
 	message:
@@ -95,8 +96,7 @@ rule markDuplicatesControl:
 	benchmark:
 		"benchmarks/{sample}.markDuplicatesControl.txt"
 	params:
-		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT",
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"])
+		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
 		mem_mb=4096    
 	log:
@@ -111,6 +111,7 @@ rule markDuplicatesGermline:
 		bam=temp("SnakeWES/alignments/{sample}.germline.dd.bam"),
 		bai=temp("SnakeWES/alignments/{sample}.germline.dd.bai"),
 		metrics="SnakeWES/data/{sample}.germline.metrics.txt"
+	threads: 1
 	log:
 		"SnakeWES/logs/{sample}.markDuplicatesGermline.log"
 	message:
@@ -118,8 +119,7 @@ rule markDuplicatesGermline:
 	benchmark:
 		"benchmarks/{sample}.markDuplicatesGermline.txt"
 	params:
-		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT",
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"])
+		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
 		mem_mb=4096    
 	log:
@@ -138,6 +138,7 @@ rule baseRecalibratorTumor:
 		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
 		recal_table="SnakeWES/data/{sample}.tumor.recal.table",
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.baseRecalibratorTumor.txt"
 	log:
@@ -145,8 +146,7 @@ rule baseRecalibratorTumor:
 	message:
 		"Perform base recalibration model"
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10"  # optional
+		extra="-L " + config['intervals']
 	resources:
 		mem_mb=4096
 	wrapper:
@@ -162,7 +162,8 @@ rule baseRecalibratorControl:
 		"resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
 		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
-		recal_table="SnakeWES/data/{sample}.control.recal.table",
+		recal_table="SnakeWES/data/{sample}.control.recal.table"
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.baseRecalibratorControl.txt"
 	log:
@@ -170,8 +171,7 @@ rule baseRecalibratorControl:
 	message:
 		"Perform base recalibration model"
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10"  # optional
+		extra="-L " + config['intervals']
 	resources:
 		mem_mb=4096
 	wrapper:
@@ -187,7 +187,8 @@ rule baseRecalibratorGermline:
 		"resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
 		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
-		recal_table="SnakeWES/data/{sample}.germline.recal.table",
+		recal_table="SnakeWES/data/{sample}.germline.recal.table"
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.baseRecalibratorGermline.txt"
 	log:
@@ -195,8 +196,7 @@ rule baseRecalibratorGermline:
 	message:
 		"Perform base recalibration model"
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10"  # optional
+		extra="-L " + config['intervals']		
 	resources:
 		mem_mb=4096
 	wrapper:
@@ -212,13 +212,13 @@ rule ApplyBQSRTumor:
 	output:
 		bam="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
 		bai="SnakeWES/alignments/{sample}.tumor.dd.rec.bai"
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.ApplyBQSRTumor.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRTumor.log",
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10",  # optional
+		extra="-L " + config['intervals']
 		#embed_ref=True,  # embed the reference in cram output
 	resources:
 		mem_mb=4096
@@ -235,13 +235,13 @@ rule ApplyBQSRControl:
 	output:
 		bam="SnakeWES/alignments/{sample}.control.dd.rec.bam",
 		bai="SnakeWES/alignments/{sample}.control.dd.rec.bai"
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.ApplyBQSRControl.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRControl.log",
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10",  # optional
+		extra="-L " + config['intervals']
 		#embed_ref=True,  # embed the reference in cram output
 	resources:
 		mem_mb=4096
@@ -258,13 +258,13 @@ rule ApplyBQSRGermline:
 	output:
 		bam="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
 		bai="SnakeWES/alignments/{sample}.germline.dd.rec.bai"
+	threads: 1
 	benchmark:
 		"benchmarks/{sample}.ApplyBQSRGermline.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRGermline.log",
 	params:
-		extra="-L " + config['intervals'],  # optional
-		java_opts="-XX:ParallelGCThreads=10",  # optional
+		extra="-L " + config['intervals']
 		#embed_ref=True,  # embed the reference in cram output
 	resources:
 		mem_mb=4096
