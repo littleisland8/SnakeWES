@@ -1,12 +1,12 @@
 rule AlfredTumorStats:
 	input:
-		bam="alignments/{sample}.tumor.dd.rec.bam",
-		bai="alignments/{sample}.tumor.dd.rec.bai"
+		bam="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
+		bai="SnakeWES/alignments/{sample}.tumor.dd.rec.bai"
 	output:
-		"qc/{sample}.tumor.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.tumor.qc.tsv.gz"
 	threads: 1
 	log:
-		"logs/{sample}.tumor.alfred.log"
+		"SnakeWES/logs/{sample}.tumor.alfred.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
@@ -17,13 +17,13 @@ rule AlfredTumorStats:
 
 rule AlfredControlStats:
 	input:
-		bam="alignments/{sample}.control.dd.rec.bam",
-		bai="alignments/{sample}.control.dd.rec.bai"
+		bam="SnakeWES/alignments/{sample}.control.dd.rec.bam",
+		bai="SnakeWES/alignments/{sample}.control.dd.rec.bai"
 	output:
-		"qc/{sample}.control.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.control.qc.tsv.gz"
 	threads: 1
 	log:
-		"logs/{sample}.control.alfred.log"
+		"SnakeWES/logs/{sample}.control.alfred.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
@@ -34,13 +34,13 @@ rule AlfredControlStats:
 
 rule AlfredGermlineStats:
 	input:
-		bam="alignments/{sample}.germline.dd.rec.bam",
-		bai="alignments/{sample}.germline.dd.rec.bai"
+		bam="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
+		bai="SnakeWES/alignments/{sample}.germline.dd.rec.bai"
 	output:
-		"qc/{sample}.germline.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.germline.qc.tsv.gz"
 	threads: 1
 	log:
-		"logs/{sample}.germline.alfred.log"
+		"SnakeWES/logs/{sample}.germline.alfred.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
@@ -51,12 +51,12 @@ rule AlfredGermlineStats:
 
 rule PlotAlfredTumorStats:
 	input:
-		"qc/{sample}.tumor.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.tumor.qc.tsv.gz"
 	output:
-		"qc/{sample}.tumor.qc.tsv.gz.pdf"
+		"SnakeWES/qc/{sample}.tumor.qc.tsv.gz.pdf"
 	threads: 1
 	log:
-		"logs/{sample}.tumor.alfred.plot.log"
+		"SnakeWES/logs/{sample}.tumor.alfred.plot.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
@@ -66,12 +66,12 @@ rule PlotAlfredTumorStats:
 
 rule PlotAlfredControlStats:
 	input:
-		"qc/{sample}.control.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.control.qc.tsv.gz"
 	output:
-		"qc/{sample}.control.qc.tsv.gz.pdf"
+		"SnakeWES/qc/{sample}.control.qc.tsv.gz.pdf"
 	threads: 1
 	log:
-		"logs/{sample}.control.alfred.plot.log"
+		"SnakeWES/logs/{sample}.control.alfred.plot.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
@@ -81,12 +81,12 @@ rule PlotAlfredControlStats:
 
 rule PlotAlfredGermlineStats:
 	input:
-		"qc/{sample}.germline.qc.tsv.gz"
+		"SnakeWES/qc/{sample}.germline.qc.tsv.gz"
 	output:
-		"qc/{sample}.germline.qc.tsv.gz.pdf"
+		"SnakeWES/qc/{sample}.germline.qc.tsv.gz.pdf"
 	threads: 1
 	log:
-		"logs/{sample}.germline.alfred.plot.log"
+		"SnakeWES/logs/{sample}.germline.alfred.plot.log"
 	conda:
 		"../envs/alfred.yaml"
 	params:
