@@ -132,15 +132,15 @@ rule baseRecalibratorTumor:
 		bam="SnakeWES/alignments/{sample}.tumor.dd.bam",
 		bai="SnakeWES/alignments/{sample}.tumor.dd.bai",
 		ref=config['genome'],
-		dict="resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
-		known=["resources/dbSNP.b156.filt.vcf.gz", 
-		"resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
-		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
+		dict="SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
+		known=["SnakeWES/resources/dbSNP.b156.filt.vcf.gz", 
+		"SnakeWES/resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
+		config["gnomAD"], "SnakeWES/resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
 		recal_table="SnakeWES/data/{sample}.tumor.recal.table",
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.baseRecalibratorTumor.txt"
+		"SnakeWES/benchmarks/{sample}.baseRecalibratorTumor.txt"
 	log:
 		"SnakeWES/logs/{sample}.baseRecalibratorTumor.log"
 	message:
@@ -157,10 +157,10 @@ rule baseRecalibratorControl:
 		bam="SnakeWES/alignments/{sample}.control.dd.bam",
 		bai="SnakeWES/alignments/{sample}.control.dd.bai",
 		ref=config['genome'],
-		dict="resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
-		known=["resources/dbSNP.b156.filt.vcf.gz", 
-		"resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
-		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
+		dict="SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
+		known=["SnakeWES/resources/dbSNP.b156.filt.vcf.gz", 
+		"SnakeWES/resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
+		config["gnomAD"], "SnakeWES/resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
 		recal_table="SnakeWES/data/{sample}.control.recal.table"
 	threads: 1
@@ -182,15 +182,15 @@ rule baseRecalibratorGermline:
 		bam="SnakeWES/alignments/{sample}.germline.dd.bam",
 		bai="SnakeWES/alignments/{sample}.germline.dd.bai",
 		ref=config['genome'],
-		dict="resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
-		known=["resources/dbSNP.b156.filt.vcf.gz", 
-		"resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
-		config["gnomAD"], "resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
+		dict="SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
+		known=["SnakeWES/resources/dbSNP.b156.filt.vcf.gz", 
+		"SnakeWES/resources/Homo_sapiens_assembly38.known_indels.vcf.gz",
+		config["gnomAD"], "SnakeWES/resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz"],  # optional known sites - single or a list
 	output:
 		recal_table="SnakeWES/data/{sample}.germline.recal.table"
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.baseRecalibratorGermline.txt"
+		"SnakeWES/benchmarks/{sample}.baseRecalibratorGermline.txt"
 	log:
 		"SnakeWES/logs/{sample}.baseRecalibratorGermline.log"
 	message:
@@ -207,7 +207,7 @@ rule ApplyBQSRTumor:
 		bam="SnakeWES/alignments/{sample}.tumor.dd.bam",
 		bai="SnakeWES/alignments/{sample}.tumor.dd.bai",	
 		ref=config['genome'],
-		dict="resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
+		dict="SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
 		recal_table="SnakeWES/data/{sample}.tumor.recal.table",
 	output:
 		bam="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
@@ -230,14 +230,14 @@ rule ApplyBQSRControl:
 		bam="SnakeWES/alignments/{sample}.control.dd.bam",
 		bai="SnakeWES/alignments/{sample}.control.dd.bai",   
 		ref=config['genome'],
-		dict="resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
+		dict="SnakeWES/resources/GRCh38_full_analysis_set_plus_decoy_hla.dict",
 		recal_table="SnakeWES/data/{sample}.control.recal.table",
 	output:
 		bam="SnakeWES/alignments/{sample}.control.dd.rec.bam",
 		bai="SnakeWES/alignments/{sample}.control.dd.rec.bai"
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.ApplyBQSRControl.txt"
+		"SnakeWES/benchmarks/{sample}.ApplyBQSRControl.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRControl.log",
 	params:
@@ -260,7 +260,7 @@ rule ApplyBQSRGermline:
 		bai="SnakeWES/alignments/{sample}.germline.dd.rec.bai"
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.ApplyBQSRGermline.txt"
+		"SnakeWES/benchmarks/{sample}.ApplyBQSRGermline.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRGermline.log",
 	params:
