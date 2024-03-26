@@ -64,7 +64,7 @@ elif config["run_mode"] == "Nocontrol":
 			expand(f"qc/{{sample}}_tumor_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 			expand(f"alignments/{{sample}}.tumor.dd.rec.bam", sample=config["samples"].values()),
 			expand(f"qc/{{sample}}.tumor.qc.tsv.gz.pdf", sample=config["samples"].values()),
-			expand(f"results/{{sample}}_tumor/{{sample}}.{{caller}}.vcf.gz", sample=config["samples"].values(), caller=config["callers"].values())
+			expand(f"results/{{sample}}_tumor/{{sample}}.{{caller}}.vcf.gz.tbi", sample=config["samples"].values(), caller=config["callers"].values())
 
 elif config["run_mode"] == "Paired":
 
