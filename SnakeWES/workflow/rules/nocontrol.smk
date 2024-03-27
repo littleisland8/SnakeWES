@@ -777,7 +777,7 @@ rule AddSampleNamesMultisampleNocontrol:
 	threads: 1
 	params: 
 		txt="SnakeWES/results/{caller}_sample_list.txt", 
-		script="workflow/scripts/add_sample_names_wes.py"
+		script="SnakeWES/workflow/scripts/add_sample_names_wes.py"
 	log:
 		"SnakeWES/logs/{caller}.AddSampleNamesMultisamplePoN.log"
 	shell:
@@ -823,7 +823,7 @@ rule FormattingHeaderSingleSample:
 	output:
 		fo_tsv="SnakeWES/results/{sample}_tumor/{sample}.{caller}.filt.vep.tsv"
 	params:
-		"workflow/scripts/formatting_header.R"
+		"SnakeWES/workflow/scripts/formatting_header.R"
 	threads: 1 
 	log:
 		"SnakeWES/logs/{sample}.{caller}.FormattingHeaderSingleSample.log"
@@ -839,7 +839,7 @@ rule FormattingHeaderMultisample:
 	output:
 		fo_tsv="SnakeWES/results/multisample.{caller}.vep.tsv"
 	params:
-		"workflow/scripts/formatting_header.R"
+		"SnakeWES/workflow/scripts/formatting_header.R"
 	threads: 1 
 	log:
 		"SnakeWES/logs/{caller}.FormattingHeaderMultisample.log"
