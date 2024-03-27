@@ -60,7 +60,7 @@ rule PlotAlfredTumorStats:
 	conda:
 		"../envs/alfred.yaml"
 	params:
-		script="workflow/scripts/stats.R"
+		script="SnakeWES/workflow/scripts/stats.R"
 	shell:
 		"Rscript {params.script} {input} 2>{log}"
 
@@ -75,7 +75,7 @@ rule PlotAlfredControlStats:
 	conda:
 		"../envs/alfred.yaml"
 	params:
-		script="workflow/scripts/stats.R"
+		script="SnakeWES/workflow/scripts/stats.R"
 	shell:
 		"Rscript {params.script} {input} 2>{log}"
 
@@ -90,6 +90,6 @@ rule PlotAlfredGermlineStats:
 	conda:
 		"../envs/alfred.yaml"
 	params:
-		script="workflow/scripts/stats.R"
+		script="SnakeWES/workflow/scripts/stats.R"
 	shell:
 		"Rscript {params.script} {input} 2>{log}"
