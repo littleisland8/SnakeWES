@@ -387,7 +387,7 @@ rule FreebayesCallNormTumorNocontrol:
 	log:
 		"SnakeWES/logs/{sample}.freebayes_call_and_norm_on_samples.log"
 	shell:
-		"freebayes -f {params.ref} -F 0.01 -C 2 -t {params.intervals} --pooled-continuous {input.bam} | "
+		"freebayes -f {params.ref} -F 0.01 -C 2 -t <(zcat {params.intervals}) --pooled-continuous {input.bam} | "
 		"bcftools norm -m - -f {params.ref} -Oz -o {output} 2>{log}"
 
 rule FreebayesIndexTumorsNocontrol:
