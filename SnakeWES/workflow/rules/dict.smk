@@ -1,8 +1,8 @@
 rule create_dict:
     input:
-        config["genome"],
+        "GRCh38_full_analysis_set_plus_decoy_hla.fa"
     output:
-        config["genome"]+".dict",
+        "GRCh38_full_analysis_set_plus_decoy_hla.dict"
     log:
         "logs/create_dict.log",
     params:
