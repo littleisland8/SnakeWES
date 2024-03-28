@@ -539,8 +539,7 @@ rule Strelka2AddAfFieldOnTumorsNocontrol:
 
 rule Strelka2FilterTumorNocontrol: 
 	input:
-		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz",
-		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz.tbi"
+		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.addaf.vcf.gz"
 	output:
 		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz",
 		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz.tbi"
