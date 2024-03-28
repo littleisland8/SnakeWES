@@ -573,8 +573,11 @@ rule MakeConsensus:
 		"SnakeWES/logs/{sample}.MakeConsensus.log"
 	conda:
 		"../envs/bcftools.yaml"
+	params:
+		callers=list(config["callers"].values())[0],
+		files= ["SnakeWES/results/{sample}_tumor/{sample}." + x + ".vcf.gz" for x in list(config["callers"].values())]
 	shell:
-		"bcftools isec -w 1 -n~111 -O z -o {output.vcf} {input}"
+		"bcftools isec -w 1 -n~111 -O z -o {output.vcf} {params.files} && tabix -p vcf {output.vcf}"
 
 
 ########################################################################### VEP ###########################################################################

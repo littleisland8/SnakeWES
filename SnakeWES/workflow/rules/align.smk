@@ -9,7 +9,7 @@ rule bwaTumor:
 	message:
 		"Mapping reads with bwa-mem2 on tumor {wildcards.sample}"
 	benchmark:
-		"benchmarks/{sample}.bwaTumor.txt"
+		"SnakeWES/benchmarks/{sample}.bwaTumor.txt"
 	params:
 		extra=r"-R '@RG\tID:{sample}\tSM:{sample}_tumor'",
 		sort="samtools",  
@@ -28,7 +28,7 @@ rule bwaControl:
 	message:
 		"Mapping reads with bwa-mem2 on control {wildcards.sample}"
 	benchmark:
-		"benchmarks/{sample}.bwaControl.txt"
+		"SnakeWES/benchmarks/{sample}.bwaControl.txt"
 	params:
 		extra=r"-R '@RG\tID:{sample}\tSM:{sample}_control'",
 		sort="samtools",  
@@ -48,7 +48,7 @@ rule bwaGermline:
 	message:
 		"Mapping reads with bwa-mem2 on germline {wildcards.sample}"
 	benchmark:
-		"benchmarks/{sample}.bwaGermline.txt"
+		"SnakeWES/benchmarks/{sample}.bwaGermline.txt"
 	params:
 		extra=r"-R '@RG\tID:{sample}\tSM:{sample}_germline'",
 		sort="samtools",  
@@ -71,7 +71,7 @@ rule markDuplicatesTumor:
 	message:
 		"Mark and remove PCR-optical duplicates"
 	benchmark:
-		"benchmarks/{sample}.markDuplicatesTumor.txt"
+		"SnakeWES/benchmarks/{sample}.markDuplicatesTumor.txt"
 	params:
 		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
@@ -94,7 +94,7 @@ rule markDuplicatesControl:
 	message:
 		"Mark and remove PCR-optical duplicates"
 	benchmark:
-		"benchmarks/{sample}.markDuplicatesControl.txt"
+		"SnakeWES/benchmarks/{sample}.markDuplicatesControl.txt"
 	params:
 		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
@@ -117,7 +117,7 @@ rule markDuplicatesGermline:
 	message:
 		"Mark and remove PCR-optical duplicates"
 	benchmark:
-		"benchmarks/{sample}.markDuplicatesGermline.txt"
+		"SnakeWES/benchmarks/{sample}.markDuplicatesGermline.txt"
 	params:
 		extra="--REMOVE_DUPLICATES true --CREATE_INDEX true --VALIDATION_STRINGENCY LENIENT"
 	resources:
@@ -165,7 +165,7 @@ rule baseRecalibratorControl:
 		recal_table="SnakeWES/data/{sample}.control.recal.table"
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.baseRecalibratorControl.txt"
+		"SnakeWES/benchmarks/{sample}.baseRecalibratorControl.txt"
 	log:
 		"SnakeWES/logs/{sample}.baseRecalibratorControl.log"
 	message:
@@ -214,7 +214,7 @@ rule ApplyBQSRTumor:
 		bai="SnakeWES/alignments/{sample}.tumor.dd.rec.bai"
 	threads: 1
 	benchmark:
-		"benchmarks/{sample}.ApplyBQSRTumor.txt"
+		"SnakeWES/benchmarks/{sample}.ApplyBQSRTumor.txt"
 	log:
 		"SnakeWES/logs/recal/{sample}.ApplyBQSRTumor.log",
 	params:

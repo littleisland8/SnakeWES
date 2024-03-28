@@ -472,7 +472,7 @@ rule VarscanCallSnvControlsPoN:
 	message:
 		"varscan call snv - control {wildcards.sample}"
 	benchmark:
-		"benchmarks/{sample}.varscan.snv.callandNorm.txt"
+		"SnakeWES/benchmarks/{sample}.varscan.snv.callandNorm.txt"
 	threads: 1
 	params:
 		intervals=config["intervals"],
@@ -520,7 +520,7 @@ rule VarscanCallIndelControlsPoN:
 	message:
 		"varscan call indel - control {wildcards.sample}"
 	benchmark:
-		"benchmarks/{sample}.varscan.indel.callandNorm.txt"
+		"SnakeWES/benchmarks/{sample}.varscan.indel.callandNorm.txt"
 	threads: 1
 	params:
 		intervals=config["intervals"],
@@ -720,7 +720,7 @@ rule MergeVarscanControlsVariantsPoN:
 	message:
 		"merge varscan controls vars"
 	benchmark:
-		"benchmarks/varscan.merge.ctr.vars.txt"
+		"SnakeWES/benchmarks/varscan.merge.ctr.vars.txt"
 	threads: 1
 	conda:
 		"../envs/bcftools.yaml"

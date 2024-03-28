@@ -3,6 +3,7 @@ configfile: "SnakeWES/config/conf.yaml"
 include: "SnakeWES/workflow/rules/fastqc.smk"
 include: "SnakeWES/workflow/rules/trim.smk"
 include: "SnakeWES/workflow/rules/depth.smk"
+include: "SnakeWES/workflow/rules/dict.smk"
 include: "SnakeWES/workflow/rules/align.smk"
 include: "SnakeWES/workflow/rules/alfred.smk"
 include: "SnakeWES/workflow/rules/vep.smk"
@@ -64,7 +65,8 @@ elif config["run_mode"] == "Nocontrol":
 			expand(f"SnakeWES/qc/{{sample}}_tumor_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
 			expand(f"SnakeWES/alignments/{{sample}}.tumor.dd.rec.bam", sample=config["samples"].values()),
 			expand(f"SnakeWES/qc/{{sample}}.tumor.qc.tsv.gz.pdf", sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}_tumor/{{sample}}.{{caller}}.vcf.gz.tbi", sample=config["samples"].values(), caller=config["callers"].values())
+			expand(f"SnakeWES/results/{{sample}}_tumor/{{sample}}.{{caller}}.vcf.gz.tbi", sample=config["samples"].values(), caller=config["callers"].values()),
+			expand(f"SnakeWES/results/{{sample}}_tumor/{{sample}}.consensus.vcf.gz", sample=config["samples"].values())
 
 elif config["run_mode"] == "Paired":
 
