@@ -1,12 +1,12 @@
 configfile: "SnakeWES/config/conf.yaml"
 
-include: "SnakeWES/workflow/rules/fastqc.smk"
-include: "SnakeWES/workflow/rules/trim.smk"
-include: "SnakeWES/workflow/rules/depth.smk"
-include: "SnakeWES/workflow/rules/dict.smk"
-include: "SnakeWES/workflow/rules/align.smk"
-include: "SnakeWES/workflow/rules/alfred.smk"
-include: "SnakeWES/workflow/rules/vep.smk"
+#include: "SnakeWES/workflow/rules/fastqc.smk"
+#include: "SnakeWES/workflow/rules/trim.smk"
+#include: "SnakeWES/workflow/rules/depth.smk"
+#include: "SnakeWES/workflow/rules/dict.smk"
+#include: "SnakeWES/workflow/rules/align.smk"
+#include: "SnakeWES/workflow/rules/alfred.smk"
+#include: "SnakeWES/workflow/rules/vep.smk"
 
 if config["run_mode"] == "PoN":
 
@@ -74,24 +74,31 @@ elif config["run_mode"] == "Paired":
 
 	rule Paired:
 		input:
-			expand(f"SnakeWES/qc/{{sample}}_{{type}}_{{strand}}_fastqc.html", sample=config["samples"].values(), type=config["paired"].values(), strand=config["strand"].values()),
-			expand(f"SnakeWES/qc/{{sample}}_{{type}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), type=config["paired"].values(), strand=config["strand"].values()),
-			expand(f"SnakeWES/qc/{{sample}}.{{type}}.qc.tsv.gz.pdf", sample=config["samples"].values(),type=config["paired"].values()),
-			expand(f"SnakeWES/results/{{sample}}.varscan.paired.norm.vcf.gz", sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}.mutect2.paired.filtered.norm.vcf.gz", sample=config["samples"].values()),
-			f"SnakeWES/results/multisample.mutect2.paired.tmp01.tsv",
-			f"SnakeWES/results/multisample.varscan.paired.tmp01.tsv"
+			expand(f"SnakeWES/qc/{{sample}}_germline_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			expand(f"SnakeWES/qc/{{sample}}_tumor_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			expand(f"SnakeWES/qc/{{sample}}_germline_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			expand(f"SnakeWES/qc/{{sample}}_tumor_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			expand(f"SnakeWES/qc/{{sample}}.germline.qc.tsv.gz.pdf", sample=config["samples"].values()),
+			expand(f"SnakeWES/qc/{{sample}}.tumor.qc.tsv.gz.pdf", sample=config["samples"].values()),
+			#expand(f"SnakeWES/results/{{sample}}.{{caller}}.paired.norm.vcf.gz", sample=config["samples"].values(), caller=config["callers_paired"].values()),
+			#f"SnakeWES/results/multisample.mutect2.paired.tmp01.tsv",
+			#f"SnakeWES/results/multisample.varscan.paired.tmp01.tsv"
 
 	rule PairedOneSample:
 		input:
-			expand(f"SnakeWES/qc/{{sample}}_{{type}}_{{strand}}_fastqc.html", sample=config["samples"].values(), type=config["paired"].values(), strand=config["strand"].values()),
-			expand(f"SnakeWES/qc/{{sample}}_{{type}}_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), type=config["paired"].values(), strand=config["strand"].values()),
-			expand(f"SnakeWES/qc/{{sample}}.{{type}}.qc.tsv.gz.pdf", sample=config["samples"].values(),type=config["paired"].values()),
-			expand(f"SnakeWES/results/{{sample}}.varscan.paired.snp.vcf.gz.tbi",sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}.varscan.paired.indel.vcf.gz.tbi",sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}.varscan.paired.vcf.gz", sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}.mutect2.paired.filtered.vep.vcf.gz.tbi", sample=config["samples"].values()),
-			expand(f"SnakeWES/results/{{sample}}.varscan.paired.vep.vcf.gz.tbi", sample=config["samples"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}_germline_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}_tumor_{{strand}}_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}_germline_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}_tumor_{{strand}}_tr_fastqc.html", sample=config["samples"].values(), strand=config["strand"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}.germline.qc.tsv.gz.pdf", sample=config["samples"].values()),
+			#expand(f"SnakeWES/qc/{{sample}}.tumor.qc.tsv.gz.pdf", sample=config["samples"].values()),
+			expand(f"SnakeWES/results/{{sample}}.{{caller}}.paired.norm.vcf.gz", sample=config["samples"].values(), caller=config["callers_paired"].values())
+
+			#expand(f"SnakeWES/results/{{sample}}.varscan.paired.snp.vcf.gz.tbi",sample=config["samples"].values()),
+			#expand(f"SnakeWES/results/{{sample}}.varscan.paired.indel.vcf.gz.tbi",sample=config["samples"].values()),
+			#expand(f"SnakeWES/results/{{sample}}.varscan.paired.vcf.gz", sample=config["samples"].values()),
+			#expand(f"SnakeWES/results/{{sample}}.mutect2.paired.filtered.vep.vcf.gz.tbi", sample=config["samples"].values()),
+			#expand(f"SnakeWES/results/{{sample}}.varscan.paired.vep.vcf.gz.tbi", sample=config["samples"].values()),
 
 
 else:

@@ -283,9 +283,9 @@ rule ConcatStrelka2OutputPaired:
         calls=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz"],
         idx=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz.tbi", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz.tbi"]
     output:
-        "results/{sample}.strelka2.paired.vcf.gz"
+        "SnakeWES/results/{sample}.strelka2.paired.vcf.gz"
     log:
-        "logs/{sample}.ConcatStrelka2OutputPaired.log",
+        "SnakeWES/logs/{sample}.ConcatStrelka2OutputPaired.log",
     params:
         uncompressed_bcf=True,
         extra="-a",  # optional parameters for bcftools concat (except -o)
