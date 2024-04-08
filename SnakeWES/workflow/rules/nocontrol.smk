@@ -470,30 +470,30 @@ rule MergeFreebayesTumorOutputNocontrol:
 
 ########################################################################### Strelka 2 ###########################################################################
 
-rule Strelka2Configuration:
+rule Strelka2ConfigurationNocontrol:
 	input:
 		"SnakeWES/alignments/{sample}.tumor.dd.rec.bam"
 	output:
 		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
 	threads: 1
 	log:
-		"SnakeWES/logs/{sample}.Strelka2Configuration.log"
+		"SnakeWES/logs/{sample}.Strelka2ConfigurationNocontrol.log"
 	params:
-		target=config["Strelka2_intervals"],
+		target=config["intervals"],
 		ref=config["genome"],
-		strelka2=config["Strelka2"]
+		strelka2=config["Strelka2_germline"]
 	shell:
 		"{params.strelka2} --bam {input} --referenceFasta {params.ref} --runDir SnakeWES/results/{wildcards.sample}_tumor/strelka2/ --callRegions {params.target} 2>{log}"
 
 
-rule RunStrelka2:
+rule RunStrelka2Nocontrol:
 	input:
 		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
 	output:
 		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
 	threads: 20
 	log:
-		"SnakeWES/logs/{sample}.RunStrelka2.log"
+		"SnakeWES/logs/{sample}.RunStrelka2Nocontrol.log"
 	params:
 		tmp="SnakeWES/results/{sample}_tumor/strelka2/results/variants/variants.vcf.gz",
 		ref=config["genome"]

@@ -243,6 +243,103 @@ rule NormVarscanPaired:
 		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view -f PASS {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - 2>{log}"
 
 
+
+#######################################################################################   STRELKA2   #######################################################################################
+
+rule Strelka2ConfigurationPaired:
+	input:
+		bamT="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
+		baiT="SnakeWES/alignments/{sample}.tumor.dd.rec.bam.bai",
+		bamC="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
+		baiC="SnakeWES/alignments/{sample}.germline.dd.rec.bam.bai"
+	output:
+		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
+	threads: 1
+	log:
+		"SnakeWES/logs/{sample}.Strelka2ConfigurationPaired.log"
+	params:
+		target=config["Strelka2_intervals"],
+		ref=config["genome"],
+		strelka2=config["Strelka2"]
+	shell:
+		"{params.strelka2} --normalBam {input.bamC} --tumorBam {input.bamT} --referenceFasta {params.ref} --runDir SnakeWES/results/{wildcards.sample}_strelka2/ --callRegions {params.target} 2>{log}"
+
+
+rule RunStrelka2Paired:
+	input:
+		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
+	output:
+		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
+	threads: 20
+	log:
+		"SnakeWES/logs/{sample}.RunStrelka2.log"
+	params:
+		tmp="SnakeWES/results/{sample}_tumor/strelka2/results/variants/variants.vcf.gz",
+		ref=config["genome"]
+	shell:
+		"{input} -m local -j {threads} && bcftools norm -O z -m - -f {params.ref} -o {output} {params.tmp}"
+
+rule Strelka2IndexTumorsNocontrol:
+	input:
+		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
+	output:
+		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz.tbi"
+	threads: 1
+	conda:
+		"../envs/tabix.yaml"
+	log:
+		"SnakeWES/logs/{sample}.FreebayesIndexTumorsNocontrol.log"
+	shell:
+		"tabix -p vcf {input}"
+
+rule Strelka2AddAfFieldOnTumorsNocontrol:  
+	input:
+		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz",
+		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz.tbi"
+	output:
+		vcf=temp("SnakeWES/results/{sample}_tumor/{sample}.strelka2.addaf.vcf.gz")
+	threads: 1
+	conda:
+		"../envs/bcftools.yaml"
+	log:
+		"SnakeWES/logs/{sample}.Strelka2AddAfFieldOnTumorsNocontrol.log"
+	params:
+		tsv="SnakeWES/results/{sample}_tumor/{sample}.strelka2.annot.tsv.gz",
+		tsv_tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.annot.tsv.gz.tbi"
+	shell:
+		"""
+		bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t[%AD{{0}}\t%AD{{1}}]' {input.vcf} | 
+		awk 'OFS=FS="\t"''{{print $1,$2,$3,$4,$6/($5 + $6)}}' | bgzip -c > {params.tsv} 2>{log} && 
+		tabix -b2 -e2 {params.tsv} 2>>{log} && 
+		bcftools annotate -a {params.tsv} -h <(echo '##FORMAT=<ID=AF,Number=1,Type=Float,Description="Allele Frequency">') --columns CHROM,POS,REF,ALT,FORMAT/AF {input.vcf} -Oz -o {output.vcf} 2>>{log} && 
+		rm {params.tsv} 2>>{log} && 
+		rm {params.tsv_tbi} 2>>{log}
+		"""
+
+rule Strelka2FilterTumorNocontrol: 
+	input:
+		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.addaf.vcf.gz"
+	output:
+		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz",
+		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz.tbi"
+	log:
+		"SnakeWES/logs/{sample}.Strelka2FilterTumorNocontrol.log",
+	threads: 1
+	conda:
+		"../envs/bcftools.yaml"
+	params:
+		excl=config["chr_to_exclude"],
+		depth=config['filtering_tumors']['min_depth'],
+		vaf=config['filtering_tumors']['vaf'],
+		alt=config['filtering_tumors']['alt_depth']
+	shell:
+		"bcftools view -i 'FORMAT/DP >= {params.depth} & FORMAT/AF >= {params.vaf} & FORMAT/AD[0:1] >= {params.alt}' {input} | "
+		"grep -v -f {params.excl} | "
+		"bcftools sort -Oz -o {output.vcf} 2> {log} && "
+		"tabix -p vcf {output.vcf} 2>>{log}"
+
+
+
 #######################################################################################   VEP   #######################################################################################
 rule VepMutectPaired:
 	input:
