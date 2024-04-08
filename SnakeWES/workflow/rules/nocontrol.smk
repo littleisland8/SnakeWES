@@ -509,7 +509,7 @@ rule Strelka2IndexTumorsNocontrol:
 	conda:
 		"../envs/tabix.yaml"
 	log:
-		"SnakeWES/logs/{sample}.FreebayesIndexTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.Strelka2IndexTumorsNocontrol.log"
 	shell:
 		"tabix -p vcf {input}"
 

@@ -1,33 +1,33 @@
 rule GetPileupSummariesTumor:
 	input:
-		bam="alignments/{sample}.tumor.dd.rec.bam",
+		bam="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
 		intervals=config["intervals"],
 		variants=config["gnomAD"]
 	output:
-		"data/{sample}.tumor.pileup.table"
+		"SnakeWES/data/{sample}.tumor.pileup.table"
 	threads: 1
 	resources:
 		mem_mb=4096,
 	params:
 		extra="",
 	log:
-		"logs/{sample}.GetPileupSummariesTumor.log",
+		"SnakeWES/logs/{sample}.GetPileupSummariesTumor.log",
 	wrapper:
 		"v3.3.3/bio/gatk/getpileupsummaries"
 
 rule CalculateContaminationTumor:
 	input:
-		"data/{sample}.tumor.pileup.table"
+		"SnakeWES/data/{sample}.tumor.pileup.table"
 	output:
-		contamination="data/{sample}.tumor.contamination.table",
-		segmentation="data/{sample}.tumor.tumorseg.txt"
+		contamination="SnakeWES/data/{sample}.tumor.contamination.table",
+		segmentation="SnakeWES/data/{sample}.tumor.tumorseg.txt"
 	threads: 1
 	log:
-		"logs/{sample}.CalculateContaminationTumor.log",
+		"SnakeWES/logs/{sample}.CalculateContaminationTumor.log",
 	conda:
 		"../envs/gatk4.yaml"
 	params:
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"]),
+		#java_opts="-XX:ParallelGCThreads=" + str(config["threads"]),
 		mem_mb="-Xmx4G"
 		#extra="--tumor-segmentation data/{wildcards.sample}.tumseg.txt"
 	shell:
@@ -35,50 +35,50 @@ rule CalculateContaminationTumor:
 
 rule GetPileupSummariesGermline:
 	input:
-		bam="alignments/{sample}.germline.dd.rec.bam",
+		bam="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
 		intervals=config["intervals"],
 		variants=config["gnomAD"]
 	output:
-		"data/{sample}.germline.pileup.table"
+		"SnakeWES/data/{sample}.germline.pileup.table"
 	threads: 1
 	resources:
 		mem_mb=4096,
 	params:
 		extra="",
 	log:
-		"logs/{sample}.GetPileupSummariesGermlinePaired.log",
+		"SnakeWES/logs/{sample}.GetPileupSummariesGermlinePaired.log",
 	wrapper:
 		"v3.3.3/bio/gatk/getpileupsummaries"
 
 rule CalculateContaminationPaired:
 	input:
-		tumor="data/{sample}.tumor.pileup.table",
-		germline="data/{sample}.germline.pileup.table"
+		tumor="SnakeWES/data/{sample}.tumor.pileup.table",
+		germline="SnakeWES/data/{sample}.germline.pileup.table"
 	output:
-		contamination="data/{sample}.paired.contamination.table",
-		segmentation="data/{sample}.paired.tumorseg.txt"
+		contamination="SnakeWES/data/{sample}.paired.contamination.table",
+		segmentation="SnakeWES/data/{sample}.paired.tumorseg.txt"
 	threads: 1
 	log:
-		"logs/{sample}.CalculateContaminationPaired.log",
+		"SnakeWES/logs/{sample}.CalculateContaminationPaired.log",
 	conda:
 		"../envs/gatk4.yaml"
 	params:
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"]),
+		#java_opts="-XX:ParallelGCThreads=" + str(config["threads"]),
 		mem_mb="-Xmx4G"
 	shell:
 		"gatk --java-options {params.mem_mb} CalculateContamination -I {input.tumor} -matched {input.germline} -O {output.contamination} --tumor-segmentation {output.segmentation} 2>&1> {log}"
 
 rule Mutect2Paired:
 	input:
-		bamT="alignments/{sample}.tumor.dd.rec.bam",
-		baiT="alignments/{sample}.tumor.dd.rec.bai",
-		bamC="alignments/{sample}.germline.dd.rec.bam",
-		baiC="alignments/{sample}.germline.dd.rec.bai",
+		bamT="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
+		baiT="SnakeWES/alignments/{sample}.tumor.dd.rec.bai",
+		bamC="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
+		baiC="SnakeWES/alignments/{sample}.germline.dd.rec.bai",
 	output:
-		vcf="results/{sample}.mutect2.paired.vcf.gz",
-	threads: config["threads"]
+		vcf="SnakeWES/results/{sample}.mutect2.paired.vcf.gz",
+	threads: 10
 	log:
-		"logs/{sample}.mutect.paired.log"
+		"SnakeWES/logs/{sample}.mutect.paired.log"
 	conda:
 		"../envs/gatk4.yaml"
 	params:
@@ -93,20 +93,20 @@ rule Mutect2Paired:
 
 rule FilterMutectCallsPaired:
 	input:
-		vcf="results/{sample}.mutect2.paired.vcf.gz",
+		vcf="SnakeWES/results/{sample}.mutect2.paired.vcf.gz",
 		ref=config["genome"],
 		#bam="data/bam/{sample}.dd.rec.bam",
 		intervals=config["intervals"],
-		contamination="data/{sample}.paired.contamination.table", # from gatk CalculateContamination
-		segmentation="data/{sample}.paired.tumorseg.txt", # from gatk CalculateContamination
+		contamination="SnakeWES/data/{sample}.paired.contamination.table", # from gatk CalculateContamination
+		segmentation="SnakeWES/data/{sample}.paired.tumorseg.txt", # from gatk CalculateContamination
 		#f1r2="data/{sample}.artifacts_prior.tar.gz" # from gatk LearnReadOrientationBias
 	output:
-		vcf="results/{sample}.mutect2.paired.filtered.vcf.gz"
+		vcf="SnakeWES/results/{sample}.mutect2.paired.filtered.vcf.gz"
 	log:
-		"logs/{sample}.FilterMutectCallsPaired.log",
+		"SnakeWES/logs/{sample}.FilterMutectCallsPaired.log",
 	params:
 		#extra="--tumor-segmentation data/{wildcard.sample}.tumseg.txt",  # optional arguments, see GATK docs
-		java_opts="-XX:ParallelGCThreads=" + str(config["threads"])  # optional
+		#java_opts="-XX:ParallelGCThreads=" + str(config["threads"])  # optional
 	resources:
 		mem_mb=4096,
 	wrapper:
@@ -114,29 +114,29 @@ rule FilterMutectCallsPaired:
 
 rule NormMutect2Paired:
 	input:
-		"results/{sample}.mutect2.paired.filtered.vcf.gz"
+		"SnakeWES/results/{sample}.mutect2.paired.filtered.vcf.gz"
 	output:
-		"results/{sample}.mutect2.paired.filtered.norm.vcf.gz"
+		"SnakeWES/results/{sample}.mutect2.paired.norm.vcf.gz"
 	log:
-		"logs/{sample}.NormMutect2Paired.log",
+		"SnakeWES/logs/{sample}.NormMutect2Paired.log",
 	conda:
 		"../envs/bcftools.yaml"
 	params:
 		genome=config["genome"]
 	shell:
-		"bcftools view -f PASS {input} |bcftools norm -m - -f {params.genome} -O z -o {output} - 2>{log}"
+		"bcftools norm -m - -f {params.genome} -O z -o {output} - 2>{log}"
 
 #######################################################################################   VARSCAN   #######################################################################################
 
 rule GermlineMpileup:
     input:
         # single or list of bam files
-        bam="alignments/{sample}.germline.dd.rec.bam",
+        bam="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
         reference_genome=config["genome"],
     output:
-        "data/mpileup/{sample}.germline.mpileup.gz",
+        "SnakeWES/data/mpileup/{sample}.germline.mpileup.gz",
     log:
-        "logs/{sample}.GermlineMpileup.log",
+        "SnakeWES/logs/{sample}.GermlineMpileup.log",
     params:
         extra="-d 10000",  # optional
     wrapper:
@@ -145,12 +145,12 @@ rule GermlineMpileup:
 rule TumorMpileup:
     input:
         # single or list of bam files
-        bam="alignments/{sample}.tumor.dd.rec.bam",
+        bam="SnakeWES/alignments/{sample}.tumor.dd.rec.bam",
         reference_genome=config["genome"],
     output:
-        "data/mpileup/{sample}.tumor.mpileup.gz",
+        "SnakeWES/data/mpileup/{sample}.tumor.mpileup.gz",
     log:
-        "logs/{sample}.TumorMpileup.log",
+        "SnakeWES/logs/{sample}.TumorMpileup.log",
     params:
         extra="-d 10000",  # optional
     wrapper:
@@ -158,9 +158,9 @@ rule TumorMpileup:
 
 rule BgzipGermlineMpileup:
 	input:
-		"data/mpileup/{sample}.germline.mpileup.gz"
+		"SnakeWES/data/mpileup/{sample}.germline.mpileup.gz"
 	output:
-		"data/mpileup/{sample}.germline.mpileup"
+		"SnakeWES/data/mpileup/{sample}.germline.mpileup"
 	log:
 		"logs/{sample}.BgzipGermlineMpileup.log"
 	threads:1
@@ -169,24 +169,24 @@ rule BgzipGermlineMpileup:
 
 rule BgzipTumorMpileup:
 	input:
-		"data/mpileup/{sample}.tumor.mpileup.gz"
+		"SnakeWES/data/mpileup/{sample}.tumor.mpileup.gz"
 	output:
-		"data/mpileup/{sample}.tumor.mpileup"
+		"SnakeWES/data/mpileup/{sample}.tumor.mpileup"
 	log:
-		"logs/{sample}.BgzipTumorMpileup.log"
+		"SnakeWES/logs/{sample}.BgzipTumorMpileup.log"
 	threads:1
 	shell:
 		"bgzip -d {input}"
 
 rule VarscanSomatic:
 	input:
-		normal_pileup = "data/mpileup/{sample}.germline.mpileup",
-		tumor_pileup = "data/mpileup/{sample}.tumor.mpileup"
+		normal_pileup = "SnakeWES/data/mpileup/{sample}.germline.mpileup",
+		tumor_pileup = "SnakeWES/data/mpileup/{sample}.tumor.mpileup"
 	output:
-		snp=temp("results/{sample}.varscan.paired.snp.vcf"),
-		indel=temp("results/{sample}.varscan.paired.indel.vcf")
+		snp=temp("SnakeWES/results/{sample}.varscan.paired.snp.vcf"),
+		indel=temp("SnakeWES/results/{sample}.varscan.paired.indel.vcf")
 	log:
-		"logs/{sample}.VarscanSomatic.log"
+		"SnakeWES/logs/{sample}.VarscanSomatic.log"
 	conda:
 		"../envs/varscan.yaml"
 	message:
@@ -197,27 +197,27 @@ rule VarscanSomatic:
 
 rule VarscanBgzipIndex:
 	input:
-		snp="results/{sample}.varscan.paired.snp.vcf",
-		indel="results/{sample}.varscan.paired.indel.vcf"
+		snp="SnakeWES/results/{sample}.varscan.paired.snp.vcf",
+		indel="SnakeWES/results/{sample}.varscan.paired.indel.vcf"
 	output:
-		snpbg=temp("results/{sample}.varscan.paired.snp.vcf.gz"),
-		indelbg=temp("results/{sample}.varscan.paired.indel.vcf.gz"),
-		snpix=temp("results/{sample}.varscan.paired.snp.vcf.gz.tbi"),
-		indelix=temp("results/{sample}.varscan.paired.indel.vcf.gz.tbi")
+		snpbg=temp("SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz"),
+		indelbg=temp("SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz"),
+		snpix=temp("SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz.tbi"),
+		indelix=temp("SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz.tbi")
 	log:
-		"logs/{sample}.VarscanBgzipIndex.log"
+		"SnakeWES/logs/{sample}.VarscanBgzipIndex.log"
 	threads:1
 	shell:
 		"bgzip {input.snp} && tabix {output.snpbg} 2>{log} && bgzip {input.indel} && tabix {output.indelbg} 2>{log}"
 
-rule MergeVarscanOutput:
+rule ConcatVarscanOutput:
     input:
-        calls=["results/{sample}.varscan.paired.snp.vcf.gz", "results/{sample}.varscan.paired.indel.vcf.gz"],
-        idx=["results/{sample}.varscan.paired.snp.vcf.gz.tbi", "results/{sample}.varscan.paired.indel.vcf.gz.tbi"]
+        calls=["SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz", "SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz"],
+        idx=["SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz.tbi", "SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz.tbi"]
     output:
-        "results/{sample}.varscan.paired.vcf.gz"
+        "SnakeWES/results/{sample}.varscan.paired.vcf.gz"
     log:
-        "logs/{sample}.MergeVarscanOutput.log",
+        "SnakeWES/logs/{sample}.ConcatVarscanOutput.log",
     params:
         uncompressed_bcf=True,
         extra="-a",  # optional parameters for bcftools concat (except -o)
@@ -229,18 +229,18 @@ rule MergeVarscanOutput:
 
 rule NormVarscanPaired:
 	input:
-		"results/{sample}.varscan.paired.vcf.gz"
+		"SnakeWES/results/{sample}.varscan.paired.vcf.gz"
 	output:
-		"results/{sample}.varscan.paired.norm.vcf.gz"
+		"SnakeWES/results/{sample}.varscan.paired.norm.vcf.gz"
 	log:
-		"logs/{sample}.NormVarscanPaired.log",
+		"SnakeWES/logs/{sample}.NormVarscanPaired.log",
 	conda:
 		"../envs/bcftools.yaml"
 	params:
 		genome=config["genome"],
-		txt="results/{sample}.rh.txt"
+		txt="results/{sample}.varscan.rh.txt"
 	shell:
-		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view -f PASS {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - 2>{log}"
+		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - && rm {params.txt} 2>{log}"
 
 
 
@@ -253,59 +253,75 @@ rule Strelka2ConfigurationPaired:
 		bamC="SnakeWES/alignments/{sample}.germline.dd.rec.bam",
 		baiC="SnakeWES/alignments/{sample}.germline.dd.rec.bam.bai"
 	output:
-		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
+		"SnakeWES/results/{sample}_strelka2Paired/runWorkflow.py"
 	threads: 1
 	log:
 		"SnakeWES/logs/{sample}.Strelka2ConfigurationPaired.log"
 	params:
-		target=config["Strelka2_intervals"],
+		target=config["intervals"],
 		ref=config["genome"],
-		strelka2=config["Strelka2"]
+		strelka2=config["Strelka2_somatic"]
 	shell:
-		"{params.strelka2} --normalBam {input.bamC} --tumorBam {input.bamT} --referenceFasta {params.ref} --runDir SnakeWES/results/{wildcards.sample}_strelka2/ --callRegions {params.target} 2>{log}"
+		"{params.strelka2} --normalBam {input.bamC} --tumorBam {input.bamT} --referenceFasta {params.ref} --runDir SnakeWES/results/{wildcards.sample}_strelka2Paired/ --callRegions {params.target} 2>{log}"
 
 
 rule RunStrelka2Paired:
 	input:
-		"SnakeWES/results/{sample}_tumor/strelka2/runWorkflow.py"
+		"SnakeWES/results/{sample}_strelka2Paired/runWorkflow.py"
 	output:
-		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
+		snps="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz",
+		indels="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz"
 	threads: 20
 	log:
-		"SnakeWES/logs/{sample}.RunStrelka2.log"
-	params:
-		tmp="SnakeWES/results/{sample}_tumor/strelka2/results/variants/variants.vcf.gz",
-		ref=config["genome"]
+		"SnakeWES/logs/{sample}.RunStrelka2Paired.log"
 	shell:
 		"{input} -m local -j {threads} && bcftools norm -O z -m - -f {params.ref} -o {output} {params.tmp}"
 
-rule Strelka2IndexTumorsNocontrol:
+
+rule ConcatStrelka2OutputPaired:
+    input:
+        calls=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz"],
+        idx=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz.tbi", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz.tbi"]
+    output:
+        "results/{sample}.strelka2.paired.vcf.gz"
+    log:
+        "logs/{sample}.ConcatStrelka2OutputPaired.log",
+    params:
+        uncompressed_bcf=True,
+        extra="-a",  # optional parameters for bcftools concat (except -o)
+    threads: 1
+    resources:
+        mem_mb=10,
+    wrapper:
+        "v3.3.3/bio/bcftools/concat"
+
+rule Strelka2IndexTumorsPaired:
 	input:
-		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz"
+		"SnakeWES/results/{sample}.strelka2.paired.vcf.gz"
 	output:
-		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz.tbi"
+		"SnakeWES/results/{sample}.strelka2.paired.vcf.gz.tbi"
 	threads: 1
 	conda:
 		"../envs/tabix.yaml"
 	log:
-		"SnakeWES/logs/{sample}.FreebayesIndexTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.Strelka2IndexTumorsPaired.log"
 	shell:
 		"tabix -p vcf {input}"
 
-rule Strelka2AddAfFieldOnTumorsNocontrol:  
+rule Strelka2AddAfFieldOnTumorsPaired:  
 	input:
-		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz",
-		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.vcf.gz.tbi"
+		vcf="SnakeWES/results/{sample}.strelka2.paired.vcf.gz",
+		tbi="SnakeWES/results/{sample}.strelka2.paired.vcf.gz.tbi"
 	output:
-		vcf=temp("SnakeWES/results/{sample}_tumor/{sample}.strelka2.addaf.vcf.gz")
+		vcf=temp("SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz")
 	threads: 1
 	conda:
 		"../envs/bcftools.yaml"
 	log:
-		"SnakeWES/logs/{sample}.Strelka2AddAfFieldOnTumorsNocontrol.log"
+		"SnakeWES/logs/{sample}.Strelka2AddAfFieldOnTumorsPaired.log"
 	params:
-		tsv="SnakeWES/results/{sample}_tumor/{sample}.strelka2.annot.tsv.gz",
-		tsv_tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.annot.tsv.gz.tbi"
+		tsv="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz",
+		tsv_tbi="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz.tbi"
 	shell:
 		"""
 		bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t[%AD{{0}}\t%AD{{1}}]' {input.vcf} | 
@@ -316,27 +332,21 @@ rule Strelka2AddAfFieldOnTumorsNocontrol:
 		rm {params.tsv_tbi} 2>>{log}
 		"""
 
-rule Strelka2FilterTumorNocontrol: 
+rule NormStrelka2Paired:
 	input:
-		"SnakeWES/results/{sample}_tumor/{sample}.strelka2.addaf.vcf.gz"
+		"SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz"
 	output:
-		vcf="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz",
-		tbi="SnakeWES/results/{sample}_tumor/{sample}.strelka2.filt.vcf.gz.tbi"
+		"SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz"
 	log:
-		"SnakeWES/logs/{sample}.Strelka2FilterTumorNocontrol.log",
-	threads: 1
+		"SnakeWES/logs/{sample}.NormStrelka2Paired.log",
 	conda:
 		"../envs/bcftools.yaml"
 	params:
-		excl=config["chr_to_exclude"],
-		depth=config['filtering_tumors']['min_depth'],
-		vaf=config['filtering_tumors']['vaf'],
-		alt=config['filtering_tumors']['alt_depth']
+		genome=config["genome"],
+		txt="SnakeWES/results/{sample}.strelka2.rh.txt"
 	shell:
-		"bcftools view -i 'FORMAT/DP >= {params.depth} & FORMAT/AF >= {params.vaf} & FORMAT/AD[0:1] >= {params.alt}' {input} | "
-		"grep -v -f {params.excl} | "
-		"bcftools sort -Oz -o {output.vcf} 2> {log} && "
-		"tabix -p vcf {output.vcf} 2>>{log}"
+		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - && rm {params.txt} 2>{log}"
+
 
 
 
