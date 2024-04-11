@@ -116,7 +116,8 @@ rule NormMutect2Paired:
 	input:
 		"SnakeWES/results/{sample}.mutect2.paired.filtered.vcf.gz"
 	output:
-		"SnakeWES/results/{sample}.mutect2.paired.norm.vcf.gz"
+		vcf="SnakeWES/results/{sample}.mutect2.paired.norm.vcf.gz",
+		tbi="SnakeWES/results/{sample}.mutect2.paired.norm.vcf.gz.tbi"
 	log:
 		"SnakeWES/logs/{sample}.NormMutect2Paired.log",
 	conda:
@@ -124,7 +125,7 @@ rule NormMutect2Paired:
 	params:
 		genome=config["genome"]
 	shell:
-		"bcftools norm -m - -f {params.genome} -O z -o {output} - 2>{log}"
+		"bcftools norm -m - -f {params.genome} -O z -o {output.vcf} - && tabix -p vcf {output.vcf} 2>{log}"
 
 #######################################################################################   VARSCAN   #######################################################################################
 
@@ -210,37 +211,40 @@ rule VarscanBgzipIndex:
 	shell:
 		"bgzip {input.snp} && tabix {output.snpbg} 2>{log} && bgzip {input.indel} && tabix {output.indelbg} 2>{log}"
 
-rule ConcatVarscanOutput:
-    input:
-        calls=["SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz", "SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz"],
-        idx=["SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz.tbi", "SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz.tbi"]
-    output:
-        "SnakeWES/results/{sample}.varscan.paired.vcf.gz"
-    log:
-        "SnakeWES/logs/{sample}.ConcatVarscanOutput.log",
-    params:
-        uncompressed_bcf=True,
-        extra="-a",  # optional parameters for bcftools concat (except -o)
-    threads: 1
-    resources:
-        mem_mb=10,
-    wrapper:
-        "v3.3.3/bio/bcftools/concat"
+
+rule VarscanConcatTumorPaired: 
+	input:
+		vcf_snv="SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz",
+		vcf_indel="SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz",
+		tbi_snv="SnakeWES/results/{sample}.varscan.paired.snp.vcf.gz.tbi",
+		tbi_indel="SnakeWES/results/{sample}.varscan.paired.indel.vcf.gz.tbi"
+	output:
+		"SnakeWES/results/{sample}.varscan.paired.vcf.gz"
+	params: 
+		config["genome"]
+	threads: 1
+	conda:
+		"../envs/bcftools.yaml"
+	log:
+		"SnakeWES/logs/{sample}.VarscanConcatTumorPaired.log"
+	shell: 
+		"bcftools concat -a -Ov -o {output} {input.vcf_snv} {input.vcf_indel} 2>{log}"
 
 rule NormVarscanPaired:
 	input:
 		"SnakeWES/results/{sample}.varscan.paired.vcf.gz"
 	output:
-		"SnakeWES/results/{sample}.varscan.paired.norm.vcf.gz"
+		vcf="SnakeWES/results/{sample}.varscan.paired.norm.vcf.gz",
+		tbi="SnakeWES/results/{sample}.varscan.paired.norm.vcf.gz.tbi"
 	log:
 		"SnakeWES/logs/{sample}.NormVarscanPaired.log",
 	conda:
 		"../envs/bcftools.yaml"
 	params:
 		genome=config["genome"],
-		txt="results/{sample}.varscan.rh.txt"
+		txt="SnakeWES/results/{sample}.varscan.rh.txt"
 	shell:
-		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - && rm {params.txt} 2>{log}"
+		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output.vcf} - && tabix -p vcf {output.vcf} && rm {params.txt} 2>{log}"
 
 
 
@@ -277,23 +281,23 @@ rule RunStrelka2Paired:
 	shell:
 		"{input} -m local -j {threads} && bcftools norm -O z -m - -f {params.ref} -o {output} {params.tmp}"
 
-
-rule ConcatStrelka2OutputPaired:
-    input:
-        calls=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz"],
-        idx=["SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz.tbi", "SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz.tbi"]
-    output:
-        "SnakeWES/results/{sample}.strelka2.paired.vcf.gz"
-    log:
-        "SnakeWES/logs/{sample}.ConcatStrelka2OutputPaired.log",
-    params:
-        uncompressed_bcf=True,
-        extra="-a",  # optional parameters for bcftools concat (except -o)
-    threads: 1
-    resources:
-        mem_mb=10,
-    wrapper:
-        "v3.3.3/bio/bcftools/concat"
+rule Strelka2ConcatTumorPaired: 
+	input:
+		vcf_snv="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz",
+		vcf_indel="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz",
+		tbi_snv="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz.tbi",
+		tbi_indel="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz.tbi"
+	output:
+		"SnakeWES/results/{sample}.strelka2.paired.vcf.gz"
+	params: 
+		config["genome"]
+	threads: 1
+	conda:
+		"../envs/bcftools.yaml"
+	log:
+		"SnakeWES/logs/{sample}.Strelka2ConcatTumorPaired.log"
+	shell: 
+		"bcftools concat -a -Ov {input.vcf_snv} {input.vcf_indel} 2>{log}"
 
 rule Strelka2IndexTumorsPaired:
 	input:
@@ -336,7 +340,8 @@ rule NormStrelka2Paired:
 	input:
 		"SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz"
 	output:
-		"SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz"
+		vcf="SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz",
+		tbi="SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz.tbi"
 	log:
 		"SnakeWES/logs/{sample}.NormStrelka2Paired.log",
 	conda:
@@ -345,9 +350,7 @@ rule NormStrelka2Paired:
 		genome=config["genome"],
 		txt="SnakeWES/results/{sample}.strelka2.rh.txt"
 	shell:
-		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output} - && rm {params.txt} 2>{log}"
-
-
+		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output.vcf} - && tabix -p vcf {output.vcf} && rm {params.txt} 2>{log}"
 
 
 #######################################################################################   VEP   #######################################################################################
