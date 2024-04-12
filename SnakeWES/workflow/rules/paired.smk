@@ -299,7 +299,7 @@ rule Strelka2ConcatTumorPaired:
 	log:
 		"SnakeWES/logs/{sample}.Strelka2ConcatTumorPaired.log"
 	shell: 
-		"bcftools concat -a -Ov {input.vcf_snv} {input.vcf_indel} 2>{log}"
+		"bcftools concat -a -Oz {input.vcf_snv} {input.vcf_indel} 2>{log}"
 
 rule Strelka2IndexTumorsPaired:
 	input:
