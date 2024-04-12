@@ -274,12 +274,14 @@ rule RunStrelka2Paired:
 		"SnakeWES/results/{sample}_strelka2Paired/runWorkflow.py"
 	output:
 		snps="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz",
-		indels="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz"
+		indels="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz",
+		snps_tbi="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.snvs.vcf.gz.tbi",
+		indels_tbi="SnakeWES/results/{sample}_strelka2Paired/results/variants/somatic.indels.vcf.gz.tbi"
 	threads: 20
 	log:
 		"SnakeWES/logs/{sample}.RunStrelka2Paired.log"
 	shell:
-		"{input} -m local -j {threads} && bcftools norm -O z -m - -f {params.ref} -o {output} {params.tmp}"
+		"{input} -m local -j {threads}"
 
 rule Strelka2ConcatTumorPaired: 
 	input:
