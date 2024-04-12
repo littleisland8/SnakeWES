@@ -314,33 +314,10 @@ rule Strelka2IndexTumorsPaired:
 	shell:
 		"tabix -p vcf {input}"
 
-rule Strelka2AddAfFieldOnTumorsPaired:  
-	input:
-		vcf="SnakeWES/results/{sample}.strelka2.paired.vcf.gz",
-		tbi="SnakeWES/results/{sample}.strelka2.paired.vcf.gz.tbi"
-	output:
-		vcf=temp("SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz")
-	threads: 1
-	conda:
-		"../envs/bcftools.yaml"
-	log:
-		"SnakeWES/logs/{sample}.Strelka2AddAfFieldOnTumorsPaired.log"
-	params:
-		tsv="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz",
-		tsv_tbi="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz.tbi"
-	shell:
-		"""
-		bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t[%AD{{0}}\t%AD{{1}}]' {input.vcf} | 
-		awk 'OFS=FS="\t"''{{print $1,$2,$3,$4,$6/($5 + $6)}}' | bgzip -c > {params.tsv} 2>{log} && 
-		tabix -b2 -e2 {params.tsv} 2>>{log} && 
-		bcftools annotate -a {params.tsv} -h <(echo '##FORMAT=<ID=AF,Number=1,Type=Float,Description="Allele Frequency">') --columns CHROM,POS,REF,ALT,FORMAT/AF {input.vcf} -Oz -o {output.vcf} 2>>{log} && 
-		rm {params.tsv} 2>>{log} && 
-		rm {params.tsv_tbi} 2>>{log}
-		"""
 
 rule NormStrelka2Paired:
 	input:
-		"SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz"
+		"SnakeWES/results/{sample}.strelka2.paired.vcf.gz"
 	output:
 		vcf="SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz",
 		tbi="SnakeWES/results/{sample}.strelka2.paired.norm.vcf.gz.tbi"
@@ -353,6 +330,31 @@ rule NormStrelka2Paired:
 		txt="SnakeWES/results/{sample}.strelka2.rh.txt"
 	shell:
 		"echo {wildcards.sample}_germline > {params.txt} && echo {wildcards.sample}_tumor >> {params.txt} && bcftools view {input} |bcftools reheader -s {params.txt} |bcftools norm -m - -f {params.genome} -O z -o {output.vcf} - && tabix -p vcf {output.vcf} && rm {params.txt} 2>{log}"
+
+#rule Strelka2AddAfFieldOnTumorsPaired:  
+#	input:
+#		vcf="SnakeWES/results/{sample}.strelka2.paired.vcf.gz",
+#		tbi="SnakeWES/results/{sample}.strelka2.paired.vcf.gz.tbi"
+#	output:
+#		vcf=temp("SnakeWES/results/{sample}.strelka2.paired.addaf.vcf.gz")
+#	threads: 1
+#	conda:
+#		"../envs/bcftools.yaml"
+#	log:
+#		"SnakeWES/logs/{sample}.Strelka2AddAfFieldOnTumorsPaired.log"
+#	params:
+#		tsv="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz",
+#		tsv_tbi="SnakeWES/results/{sample}.strelka2.paired.annot.tsv.gz.tbi"
+#	shell:
+#		"""
+#		bcftools query -f'%CHROM\t%POS\t%REF\t%ALT\t[%AD{{0}}\t%AD{{1}}]' {input.vcf} | 
+#		awk 'OFS=FS="\t"''{{print $1,$2,$3,$4,$6/($5 + $6)}}' | bgzip -c > {params.tsv} 2>{log} && 
+#		tabix -b2 -e2 {params.tsv} 2>>{log} && 
+#		bcftools annotate -a {params.tsv} -h <(echo '##FORMAT=<ID=AF,Number=1,Type=Float,Description="Allele Frequency">') --columns CHROM,POS,REF,ALT,FORMAT/AF {input.vcf} -Oz -o {output.vcf} 2>>{log} && 
+#		rm {params.tsv} 2>>{log} && 
+#		rm {params.tsv_tbi} 2>>{log}
+#		"""
+
 
 
 #######################################################################################   VEP   #######################################################################################
