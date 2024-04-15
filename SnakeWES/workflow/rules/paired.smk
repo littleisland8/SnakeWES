@@ -125,7 +125,7 @@ rule NormMutect2Paired:
 	params:
 		genome=config["genome"]
 	shell:
-		"bcftools norm -m - -f {params.genome} -O z -o {output.vcf} - && tabix -p vcf {output.vcf} 2>{log}"
+		"bcftools norm -m - -f {params.genome} -O z -o {output.vcf} {input} && tabix -p vcf {output.vcf} 2>{log}"
 
 #######################################################################################   VARSCAN   #######################################################################################
 
