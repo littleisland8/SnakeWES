@@ -1,3 +1,17 @@
+rule CreateSequenceDictionary:
+	input:
+		config["genome"]
+	output:
+		config["genome"].split(".fa")[0] + ".dict"
+	log:
+		"SnakeWES/logs/CreateSequenceDictionary.log"
+	threads: 1
+	conda:
+		"../envs/gatk4.yaml"
+	shell:
+		"java -jar picard.jar CreateSequenceDictionary -R {input} -O {output}"
+
+
 rule bwaTumor:
 	input:
 		reads=["SnakeWES/data/fastq/{sample}.tumor.R1.tr.fastq.gz", "SnakeWES/data/fastq/{sample}.tumor.R2.tr.fastq.gz"],
