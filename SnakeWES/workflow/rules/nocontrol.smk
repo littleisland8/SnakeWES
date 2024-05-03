@@ -332,7 +332,7 @@ rule VarscanReheaderIndexTumorNontrol:
 		"echo {wildcards.sample} > {params.txt} 2>{log} && "
 		"bcftools reheader -s {params.txt} -o {output.vcf} {input} 2>>{log} && "
 		"rm {params.txt} 2>>{log} && "
-		"bcftools index -@ {threads} {output.vcf}"
+		"tabix -p vcf {output.vcf}"
 
 rule FilterVarscanTumorsNocontrol: 
 	input:
