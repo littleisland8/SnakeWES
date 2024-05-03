@@ -315,11 +315,12 @@ rule VarscanModAFTumorNoncontrol:
 		bcftools annotate -x FORMAT/FREQ -a {output.tsv} -h <(echo '##FORMAT=<ID=AF,Number=1,Type=Float,Description="Allele Frequency">') --columns CHROM,POS,REF,ALT,FORMAT/AF  {input} -Oz -o {output.vcf} 2>>{log}
 		"""
 
-rule VarscanReheaderTumorNontrol:
+rule VarscanReheaderIndexTumorNontrol:
 	input:
 		"SnakeWES/results/{sample}_tumor/{sample}.varscan.concat.vcf.gz"
 	output:
-		"SnakeWES/results/{sample}_tumor/{sample}.varscan.vcf.gz"
+		vcf="SnakeWES/results/{sample}_tumor/{sample}.varscan.vcf.gz",
+		tbi="SnakeWES/results/{sample}_tumor/{sample}.varscan.vcf.gz.tbi"
 	threads: 1
 	params:
 		txt="SnakeWES/results/{sample}_tumor/{sample}.rh.txt"
@@ -329,8 +330,9 @@ rule VarscanReheaderTumorNontrol:
 		"SnakeWES/logs/{sample}.VarscanReheaderTumorNontrol.log"
 	shell: 
 		"echo {wildcards.sample} > {params.txt} 2>{log} && "
-		"bcftools reheader -s {params.txt} -o {output} {input} 2>>{log} && "
-		"rm {params.txt} 2>>{log}"
+		"bcftools reheader -s {params.txt} -o {output.vcf} {input} 2>>{log} && "
+		"rm {params.txt} 2>>{log} && "
+		"bcftools index -@ {threads} {output.vcf}"
 
 rule FilterVarscanTumorsNocontrol: 
 	input:
